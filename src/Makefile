@@ -8,23 +8,23 @@ ifeq ($(shell uname), Linux)
 	TST_LIBS += -lpthread -lrt -lsubunit -lm
 endif
 
-LIB_NAME = s21_calc
+NAME = s21_calc
 
 SRCS = s21_calc.c
 
 OBJS=$(SRCS:.c=.o)
 
-all:install $(LIB_NAME).a
- gcov_report 
+all:  $(NAME).a
+
 %.o: %.c
 	$(CC) $(FLAGS) -c $< -o $@
 
-$(LIB_NAME).a: $(OBJS)
-	ar rc $(LIB_NAME).a $^
-	ranlib $(LIB_NAME).a
+$(NAME).a: $(OBJS)
+	ar rc $(NAME).a $^
+	ranlib $(NAME).a
 
-test: clean $(LIB_NAME).a
-	$(CC) $(FLAGS) tests.c $(LIB_NAME).a $(TST_LIBS) -o test
+test: clean $(NAME).a
+	$(CC) $(FLAGS) tests.c $(NAME).a $(TST_LIBS) -o test
 	./test
 
 add_coverage_flag:
@@ -37,7 +37,7 @@ gcov_report: clean add_coverage_flag test
 	gcovr -o gcov_report.html --html --html-details
 	open gcov_report.html
 
-install: cleanAll
+install: fclean
 	mkdir build
 	cd untitled && qmake && make && make clean && rm Makefile && cd ../ && mv untitled/untitled.app build
 
@@ -64,7 +64,7 @@ clean:
 	rm -rf *.gcda *.gcno *.info *.gch
 	rm -rf test report
 
-cleanAll:
+fclean:
 	rm -rf test *.gcov *.css gcov*.html
 	rm -rf *.o *.a *.out 
 	rm -rf *.gcda *.gcno *.info *.gch
