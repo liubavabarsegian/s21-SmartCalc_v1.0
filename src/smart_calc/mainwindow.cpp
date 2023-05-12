@@ -1,5 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "dijkstra.h"
+
+extern "C" void dijkstra(char *input);
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -17,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButton_7, &QPushButton::clicked, this, [this]{ append(ui->pushButton_7->text()); });
     connect(ui->pushButton_8, &QPushButton::clicked, this, [this]{ append(ui->pushButton_8->text()); });
     connect(ui->pushButton_9, &QPushButton::clicked, this, [this]{ append(ui->pushButton_9->text()); });
+
     connect(ui->pushButton_left_brace, &QPushButton::clicked, this, [this]{ append(ui->pushButton_left_brace->text()); });
     connect(ui->pushButton_right_brace, &QPushButton::clicked, this, [this]{ append(ui->pushButton_right_brace->text()); });
     connect(ui->pushButton_pow, &QPushButton::clicked, this, [this]{ append(ui->pushButton_pow->text()); });
@@ -27,10 +31,19 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButton_dot, &QPushButton::clicked, this, [this]{append(ui->pushButton_dot->text()); });
     connect(ui->pushButton_mod, &QPushButton::clicked, this, [this]{append("%"); });
 
-
+    connect(ui->pushButton_sin, &QPushButton::clicked, this, [this]{append("sin("); });
+    connect(ui->pushButton_cos, &QPushButton::clicked, this, [this]{append("cos("); });
+    connect(ui->pushButton_tan, &QPushButton::clicked, this, [this]{append("tan("); });
+    connect(ui->pushButton_sqrt, &QPushButton::clicked, this, [this]{append("sqrt("); });
+    connect(ui->pushButton_asin, &QPushButton::clicked, this, [this]{append("asin("); });
+    connect(ui->pushButton_acos, &QPushButton::clicked, this, [this]{append("acos("); });
+    connect(ui->pushButton_atan, &QPushButton::clicked, this, [this]{append("atan("); });
+    connect(ui->pushButton_ln, &QPushButton::clicked, this, [this]{append("ln("); });
+    connect(ui->pushButton_log, &QPushButton::clicked, this, [this]{append("log("); });
 
     connect(ui->pushButton_backspace, &QPushButton::clicked, this, &MainWindow::clicked_backspace);
     connect(ui->pushButton_AC, &QPushButton::clicked, this, &MainWindow::clear);
+    connect(ui->pushButton_x, &QPushButton::clicked, this, [this]{append("x");});
 }
 
 MainWindow::~MainWindow()
@@ -40,15 +53,16 @@ MainWindow::~MainWindow()
 
 void MainWindow::append(QString text)
 {
-    ui->lineEdit->setText(ui->lineEdit->text()+ text);
+    ui->textEdit->setText(ui->textEdit->toPlainText()+ text);
 }
 
 void MainWindow::clicked_backspace()
 {
-     ui->lineEdit->setText(ui->lineEdit->text().remove(-1, 1));
+     ui->textEdit->setText(ui->textEdit->toPlainText().remove(-1, 1));
 }
 
 void MainWindow::clear()
 {
-    ui->lineEdit->setText("");
+    ui->textEdit->setText("");
+    dijkstra("2/(32+3)*5");
 }
