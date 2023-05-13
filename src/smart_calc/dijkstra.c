@@ -48,20 +48,30 @@ char *get_token(char *token, char *prog, int *i)
     return token;
 }
 
-void put_in_rpn(rpn *rpn_output, stack *stack_for_delims, char *token)
+void put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims, char *token)
 {
-    if (strlen(token) == 1 && isdelim(token[0]))
+    if (isdelim(token[0]))
     {
-        //пока приоритет О2 выше О1, перекладываем из стека в опн
-        //close brace
-        if (token[0] == ')')
+        if ((*stack_for_delims) == NULL)
         {
-            // while (stack_for_delims->token && stack_for_delims->token[0] != '(')
-            // {
+            (*stack_for_delims) = malloc(sizeof(rpn));
+            (*stack_for_delims)->token = malloc(sizeof(token + 1));
+            strcpy((*stack_for_delims)->token, token);
+            (*stack_for_delims)->prev = NULL;
+        }
+        else 
+        {
+            //пока приоритет О2 выше О1, перекладываем из стека в опн
+            //close brace
+            if (strcmp(token, ")") == 0)
+            {
+                while ((*stack_for_delims)->token && strcmp((*stack_for_delims)->token, "(") != 0)
+                {
+                    
+                }
                 // printf("%s\n", stack_for_delims->token);
                 // strcpy(token, stack_for_delims->token);
                 // token[strlen(stack_for_delims->token)] = '\0';
-                
                 // rpn_output->token = malloc(sizeof(token + 1));
                 // strcpy(rpn_output->token, token);
                 // rpn_output->token[strlen(token)] = '\0';
@@ -69,28 +79,28 @@ void put_in_rpn(rpn *rpn_output, stack *stack_for_delims, char *token)
                 // temp->next = rpn_output;
                 // rpn_output = temp; 
                 // rpn_output->next = NULL;
-
                 // stack *tmp = stack_for_delims;
                 // printf("%s\n", stack_for_delims->prev->token);
                 // stack_for_delims = stack_for_delims->prev;
                 // free(tmp);
-            // }
+            }
+            stack *new = malloc(sizeof(stack));
+            new->token = malloc(sizeof(token + 1));
+            strcpy(new->token, token);
+            new->token[strlen(new->token)] = '\0';
+            new->prev = (*stack_for_delims);
+            (*stack_for_delims) = new;
         }
-        // stack_for_delims->token = malloc(sizeof(token + 1));
-        // stack_for_delims->token[0] = token[0];
-        // stack_for_delims->token[1] = '\0';
-        // stack *temp = malloc(sizeof(stack));
-        // temp->prev = stack_for_delims;
-        // stack_for_delims = temp; 
     }
     else 
     {
-        if (rpn_output == NULL)
+        if ((*rpn_output) == NULL)
         {
-            rpn_output = malloc(sizeof(rpn));
-            rpn_output->token = malloc(sizeof(token + 1));
-            strcpy(rpn_output->token, token);
-            rpn_output->next = NULL;
+            (*rpn_output) = malloc(sizeof(rpn));
+            (*rpn_output)->token = malloc(sizeof(token + 1));
+            strcpy((*rpn_output)->token, token);
+            (*rpn_output)->next = NULL;
+            (*rpn_head) = (*rpn_output);
         }
         else
         {
@@ -100,33 +110,39 @@ void put_in_rpn(rpn *rpn_output, stack *stack_for_delims, char *token)
             strcpy(new->token, token);
             new->token[strlen(token)] = '\0';
             printf("mm %s\n", new->token);
-            rpn_output->next = new;
-            rpn_output = new; 
+            (*rpn_output)->next = new;
+            (*rpn_output) = new; 
         }
     }
 }
 
-int dijkstra(char *input)
+void dijkstra(char *input)
 {
     int i = 0;
     char token[50];
     rpn *rpn_output = NULL;
-    rpn *rpn_copy = rpn_output;
+    rpn *rpn_head;
     stack *stack_for_delims = NULL;
+    stack *stack_head;
     while (input[i])
     {
         get_token(token, input + i, &i);
-        put_in_rpn(rpn_copy, stack_for_delims, token);
-        printf("hmm %s\n", rpn_copy->token); //sega
+        put_in_rpn(&rpn_output, &rpn_head, &stack_for_delims, token);
     }
-    printf("stack: \n");
-    while (rpn_output)
+    printf("rpn: \n");
+    while (rpn_head)
     {
-        printf("%s\n", rpn_output->token);
-        rpn_output = rpn_output->next;
+        printf("%s ", rpn_head->token);
+        rpn_head = rpn_head->next;
+    }
+    printf("\nstack: \n");
+    while (stack_for_delims)
+    {
+        printf("%s ", stack_for_delims->token);
+        stack_for_delims = stack_for_delims->prev;
     }
 }
 int main()
 {
-    dijkstra("2/(32+3)*5");
+  dijkstra("2 / ( 32 + 3 ) * 5");
 }
