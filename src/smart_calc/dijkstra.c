@@ -1,5 +1,12 @@
 #include "dijkstra.h"
 
+int isfunc(char *str)
+{
+    if (strcmp(str, "sin") == 0 || strcmp(str, "cos") == 0 || strcmp(str, "tan") == 0 || strcmp(str, "asin") == 0 || strcmp(str, "acos") == 0 || strcmp(str, "atan") == 0)
+        return 1;
+    return 0;
+}
+
 int isdelim(char c)
 {
     if(strchr(" +-/*%^=()", c) || c==9 || c=='\r' || c==0)
@@ -7,22 +14,21 @@ int isdelim(char c)
     return 0;
 }
 
-int get_operator_priority(char op) {
-    switch(op) {
-        case '(':
-            return 3;
-        case '^':
-            return 2;
-        case '*':
-        case '/':
-        case '%':
-            return 1;
-        case '+':
-        case '-':
-            return 0;
-        default:
-            return -1; // error: unknown operator
-    }
+int get_operator_priority(char *op) {
+    if (strcmp(op, "~") == 0  || isfunc(op))
+        return 4;
+    else if (strcmp(op, "(") == 0)
+        return 3;
+    else if (strcmp(op, "^") == 0)
+        return 2;
+    else if (strcmp(op, "^") == 0)
+        return 2;
+    else if (strcmp(op, "*") == 0 || strcmp(op, "/") == 0 || strcmp(op, "%") == 0)
+        return 1;
+    else if (strcmp(op, "+") == 0)
+        return 0;
+    else
+        return -1; // error: unknown operator
 }
 
 char *get_token(char *token, char *prog, int *i)
@@ -38,7 +44,7 @@ char *get_token(char *token, char *prog, int *i)
         ++prog;
         ++(*i);
     }  
-    if(strchr("+-*/%^=()", *prog)){
+    if(strchr("+-~*/%^=()", *prog)){
         tok_type = DELIMITER;
         printf("delimiter: ");
         *temp++ = *prog++;
@@ -49,7 +55,7 @@ char *get_token(char *token, char *prog, int *i)
             *temp++ = *prog++;
             ++(*i);
         }
-        printf("var: ");
+        printf("func: ");
         tok_type = VARIABLE;
     }
     else if(isdigit(*prog)) {
@@ -68,7 +74,7 @@ char *get_token(char *token, char *prog, int *i)
 
 void put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims, char *token)
 {
-    if (isdelim(token[0]))
+    if (isdelim(token[0]) || isfunc(token))
     {
         if ((*stack_for_delims) == NULL)
         {
@@ -79,18 +85,16 @@ void put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims, char
         }
         else 
         {
-            printf("CUR DELIm: %s\n", token);
             //close brace
             if (strcmp(token, ")") == 0)
             {
-                printf("HELLO?");
                 while ((*stack_for_delims)->token && strcmp((*stack_for_delims)->token, "(") != 0)
                 {
                     rpn *new = malloc(sizeof(rpn));
                     new->token = malloc(sizeof(token + 1));
                     new->next = NULL;
                     strcpy(new->token, (*stack_for_delims)->token);
-                    new->token[strlen(token)] = '\0';
+                    new->token[strlen(new->token)] = '\0';
                     (*rpn_output)->next = new;
                     (*rpn_output) = new; 
                     stack *temp = (*stack_for_delims);
@@ -100,19 +104,29 @@ void put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims, char
                 stack *temp = (*stack_for_delims);
                 (*stack_for_delims) = (*stack_for_delims)->prev;
                 free(temp);
-                printf("temp stack delim: %s\n", (*stack_for_delims)->token);
+                // if ((*stack_for_delims) && isfunc((*stack_for_delims)->token))
+                // {
+                //     rpn *new = malloc(sizeof(rpn));
+                //     new->token = malloc(sizeof(token + 1));
+                //     new->next = NULL;
+                //     strcpy(new->token, (*stack_for_delims)->token);
+                //     new->token[strlen(new->token)] = '\0';
+                //     (*rpn_output)->next = new;
+                //     (*rpn_output) = new; 
+                //     stack *temp = (*stack_for_delims);
+                //     (*stack_for_delims) = (*stack_for_delims)->prev;
+                //     free(temp);
+                // }
             }
             else {
                 //пока приоритет О2 выше О1, перекладываем из стека в опн
-                while ((*stack_for_delims) && (strcmp((*stack_for_delims)->token, "(") != 0) && get_operator_priority((*stack_for_delims)->token[0]) >= get_operator_priority(token[0]))
+                while ((*stack_for_delims) && (strcmp((*stack_for_delims)->token, "(") != 0) && get_operator_priority((*stack_for_delims)->token) >= get_operator_priority(token))
                 {
-                    printf("stack %s %d\n", (*stack_for_delims)->token, get_operator_priority((*stack_for_delims)->token[0]));
-                    printf("token %s %d\n", token, get_operator_priority(token[0]));
                     rpn *new = malloc(sizeof(rpn));
                     new->token = malloc(sizeof(token + 1));
                     new->next = NULL;
                     strcpy(new->token, (*stack_for_delims)->token);
-                    new->token[strlen(token)] = '\0';
+                    new->token[strlen(new->token)] = '\0';
                     (*rpn_output)->next = new;
                     (*rpn_output) = new; 
                     stack *temp = (*stack_for_delims);
@@ -144,7 +158,7 @@ void put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims, char
             new->token = malloc(sizeof(token + 1));
             new->next = NULL;
             strcpy(new->token, token);
-            new->token[strlen(token)] = '\0';
+            new->token[strlen(new->token)] = '\0';
             (*rpn_output)->next = new;
             (*rpn_output) = new; 
         }
@@ -185,7 +199,7 @@ void dijkstra(char *input)
         new->token = malloc(sizeof(token + 1));
         new->next = NULL;
         strcpy(new->token, stack_for_delims->token);
-        new->token[strlen(token)] = '\0';
+        new->token[strlen(new->token)] = '\0';
         rpn_output->next = new;
         rpn_output = new; 
         stack *temp = stack_for_delims;
@@ -207,5 +221,5 @@ void dijkstra(char *input)
 }
 int main()
 {
-  dijkstra("2 / ( 32 + 3 ) * 5");
+  dijkstra("2 / ( ~32 + 3 ) * acos(sin(cos(5) + 4^2))");
 }
