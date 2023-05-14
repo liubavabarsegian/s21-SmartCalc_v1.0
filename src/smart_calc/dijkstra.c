@@ -34,7 +34,6 @@ int get_operator_priority(char *op) {
 char *get_token(char *token, char *prog, int *i)
 {
     register char *temp;
-    char tok_type = 0;
     temp = token;
     *temp = '\0';
 
@@ -45,8 +44,6 @@ char *get_token(char *token, char *prog, int *i)
         ++(*i);
     }  
     if(strchr("+-~*/%^=()", *prog)){
-        tok_type = DELIMITER;
-        printf("delimiter: ");
         *temp++ = *prog++;
         ++(*i);
     }
@@ -55,8 +52,6 @@ char *get_token(char *token, char *prog, int *i)
             *temp++ = *prog++;
             ++(*i);
         }
-        printf("func: ");
-        tok_type = VARIABLE;
     }
     else if(isdigit(*prog)) {
         while(!isdelim(*prog)) 
@@ -64,11 +59,8 @@ char *get_token(char *token, char *prog, int *i)
             *temp++ = *prog++;
             ++(*i);
         }
-        printf("num : ");
-        tok_type = NUMBER;
     }
     *temp = '\0';
-    printf("%s\n", token);
     return token;
 }
 
@@ -78,7 +70,7 @@ void put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims, char
     {
         if ((*stack_for_delims) == NULL)
         {
-            (*stack_for_delims) = malloc(sizeof(rpn));
+            (*stack_for_delims) = malloc(sizeof(stack));
             (*stack_for_delims)->token = malloc(sizeof(token + 1));
             strcpy((*stack_for_delims)->token, token);
             (*stack_for_delims)->prev = NULL;
@@ -165,33 +157,31 @@ void put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims, char
     }
 }
 
-void dijkstra(char *input)
+void dijkstra(char *input, rpn **rpn_head)
 {
     int i = 0;
     char token[50];
     rpn *rpn_output = NULL;
-    rpn *rpn_head;
     stack *stack_for_delims = NULL;
-    stack *stack_head;
     while (input[i])
     {
         get_token(token, input + i, &i);
-        put_in_rpn(&rpn_output, &rpn_head, &stack_for_delims, token);
-        printf("STACK:\n");
-        rpn *copy = rpn_head;
-        while (copy)
-        {
-            printf("%s ", copy->token);
-            copy = copy->next;
-        }
-        printf("\nRNP\n");
-        stack *scopy = stack_for_delims;
-        while (scopy)
-        {
-            printf("%s ", scopy->token);
-            scopy = scopy->prev;
-        }
-        printf("\n\n");
+        put_in_rpn(&rpn_output, rpn_head, &stack_for_delims, token);
+        // printf("STACK:\n");
+        // rpn *copy = rpn_head;
+        // while (copy)
+        // {
+        //     printf("%s ", copy->token);
+        //     copy = copy->next;
+        // }
+        // printf("\nRNP\n");
+        // stack *scopy = stack_for_delims;
+        // while (scopy)
+        // {
+        //     printf("%s ", scopy->token);
+        //     scopy = scopy->prev;
+        // }
+        // printf("\n\n");
     }
     while (stack_for_delims)
     {
@@ -206,20 +196,8 @@ void dijkstra(char *input)
         stack_for_delims = stack_for_delims->prev;
         free(temp);
     }
-    printf("rpn: \n");
-    while (rpn_head)
-    {
-        printf("%s ", rpn_head->token);
-        rpn_head = rpn_head->next;
-    }
-    printf("\nstack: \n");
-    while (stack_for_delims)
-    {
-        printf("%s ", stack_for_delims->token);
-        stack_for_delims = stack_for_delims->prev;
-    }
 }
-int main()
-{
-  dijkstra("2 / ( ~32 + 3 ) * acos(sin(cos(5) + 4^2))");
-}
+// int main()
+// {
+//   dijkstra("2 / ( ~32 + 3 ) * acos(sin(cos(5) + 4^2))");
+// }
