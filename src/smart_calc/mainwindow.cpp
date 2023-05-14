@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "dijkstra.h"
+#include "scan_rpn.h"
 
-extern "C" void dijkstra(char *input);
+extern "C" char* scan_rpn(const char *input);
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -44,6 +44,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButton_backspace, &QPushButton::clicked, this, &MainWindow::clicked_backspace);
     connect(ui->pushButton_AC, &QPushButton::clicked, this, &MainWindow::clear);
     connect(ui->pushButton_x, &QPushButton::clicked, this, [this]{append("x");});
+    connect(ui->pushButton_equal, &QPushButton::clicked, this, [this]{equal();});
 }
 
 MainWindow::~MainWindow()
@@ -61,8 +62,12 @@ void MainWindow::clicked_backspace()
      ui->textEdit->setText(ui->textEdit->toPlainText().remove(-1, 1));
 }
 
+void MainWindow::equal()
+{
+     ui->textEdit->setText(QString(scan_rpn(ui->textEdit->toPlainText().toStdString().c_str())));
+}
+
 void MainWindow::clear()
 {
     ui->textEdit->setText("");
-    dijkstra("2/(32+3)*5");
 }

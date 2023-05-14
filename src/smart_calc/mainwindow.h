@@ -22,5 +22,6 @@ private:
     void append(QString text);
     void clicked_backspace();
     void clear();
+    void equal();
 };
 #endif // MAINWINDOW_H

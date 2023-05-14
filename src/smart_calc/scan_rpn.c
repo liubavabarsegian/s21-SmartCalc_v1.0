@@ -129,13 +129,13 @@ void calculate(rpn **rpn_ready, stack **result)
     }
 }
 
-int main()
+char *scan_rpn(const char *input)
 {
     rpn* rpn_ready = NULL;
-    dijkstra("2 / (2^3 + 12 ) *5", &rpn_ready);
+    dijkstra(input, &rpn_ready);
     stack* res_stack = NULL;
     rpn *copy = rpn_ready;
-     while (copy)
+    while (copy)
     {
         printf("%s ", copy->token);
         copy = copy->next;
@@ -147,5 +147,10 @@ int main()
     //     printf("%s ", rpn_ready->token);
     //     rpn_ready = rpn_ready->next;
     // }
-
+    return res_stack->token;
 }
+
+// int main()
+// {
+//     scan_rpn("2 / (2^3 + 12 ) *5");
+// }

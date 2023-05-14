@@ -1,6 +1,7 @@
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QMAKE_LFLAGS            += -Wall -Wextra -Werror -lm
 
 CONFIG += c++11
 
@@ -11,11 +12,13 @@ CONFIG += c++11
 SOURCES += \
     dijkstra.c \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    scan_rpn.c
 
 HEADERS += \
     dijkstra.h \
-    mainwindow.h
+    mainwindow.h \
+    scan_rpn.h
 
 FORMS += \
     mainwindow.ui
