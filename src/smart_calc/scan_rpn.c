@@ -68,7 +68,7 @@ void power(stack **result)
     *result = (*result)->prev;
     free(temp);
     free((*result)->token);
-    (*result)->token = malloc(sizeof(res + 1));
+    (*result)->token = malloc(sizeof(strlen(res) + 1));
     strcpy((*result)->token, res);
 }
 
@@ -111,12 +111,12 @@ void calculate(rpn **rpn_ready, stack **result)
             }
             else if (strcmp((*rpn_ready)->token, "-") == 0)
             {
-                multiplication(result);
+                difference(result);
                 printf("HERE %s\n", (*result)->token);
             }
             else if (strcmp((*rpn_ready)->token, "%") == 0)
             {
-                multiplication(result);
+                mod(result);
                 printf("HERE %s\n", (*result)->token);
             }
             else if (strcmp((*rpn_ready)->token, "^") == 0)
