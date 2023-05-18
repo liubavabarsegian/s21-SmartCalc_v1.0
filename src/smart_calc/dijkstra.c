@@ -15,17 +15,17 @@ int isdelim(char c)
 }
 
 int get_operator_priority(char *op) {
-    if (strcmp(op, "~") == 0  || isfunc(op))
+    if (strcmp(op, "~") == 0)
         return 4;
     else if (strcmp(op, "(") == 0)
         return 3;
     else if (strcmp(op, "^") == 0)
         return 2;
-    else if (strcmp(op, "^") == 0)
+    else if (isfunc(op))
         return 2;
     else if (strcmp(op, "*") == 0 || strcmp(op, "/") == 0 || strcmp(op, "%") == 0)
         return 1;
-    else if (strcmp(op, "+") == 0)
+    else if (strcmp(op, "+") == 0 )
         return 0;
     else
         return -1; // error: unknown operator
