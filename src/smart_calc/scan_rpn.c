@@ -157,10 +157,8 @@ void calculate(rpn **rpn_ready, stack **result)
 {
     while (*rpn_ready)
     {
-        printf("%s\n", (*rpn_ready)->token);
         if (*result == NULL && !isdelim((*rpn_ready)->token[0]) && !isfunc((*rpn_ready)->token))
         {
-            printf("NULL\n");
             *result = malloc(sizeof(stack));
             (*result)->token = malloc(sizeof((*rpn_ready)->token + 1));
             (*result)->prev = NULL;
@@ -168,86 +166,69 @@ void calculate(rpn **rpn_ready, stack **result)
         }
         else if (isdelim((*rpn_ready)->token[0]) || isfunc((*rpn_ready)->token))
         {
-            printf("%d\n", strcmp((*rpn_ready)->token, "+") == 0);
             if (strcmp((*rpn_ready)->token, "+") == 0)
             {
                 sum(result);
-                printf("HERE %s\n", (*result)->token);
             }
             else if (strcmp((*rpn_ready)->token, "/") == 0)
             {
                 division(result);
-                printf("HERE %s\n", (*result)->token);
             }
             else if (strcmp((*rpn_ready)->token, "*") == 0)
             {
                 multiplication(result);
-                printf("HERE %s\n", (*result)->token);
             }
             else if (strcmp((*rpn_ready)->token, "-") == 0)
             {
                 difference(result);
-                printf("HERE %s\n", (*result)->token);
             }
             else if (strcmp((*rpn_ready)->token, "%") == 0)
             {
                 mod(result);
-                printf("HERE %s\n", (*result)->token);
             }
             else if (strcmp((*rpn_ready)->token, "^") == 0)
             {
                 power(result);
-                printf("HERE %s\n", (*result)->token);
             }
             else if (strcmp((*rpn_ready)->token, "sin") == 0)
             {
                 sinus(result);
-                printf("HERE %s\n", (*result)->token);
             }
             else if (strcmp((*rpn_ready)->token, "cos") == 0)
             {
                 cosinus(result);
-                printf("HERE %s\n", (*result)->token);
             }
             else if (strcmp((*rpn_ready)->token, "tan") == 0)
             {
                 tangent(result);
-                printf("HERE %s\n", (*result)->token);
             }
             else if (strcmp((*rpn_ready)->token, "atan") == 0)
             {
                 atangent(result);
-                printf("HERE %s\n", (*result)->token);
             }
             else if (strcmp((*rpn_ready)->token, "acos") == 0)
             {
                 cosinus(result);
-                printf("HERE %s\n", (*result)->token);
             }
             else if (strcmp((*rpn_ready)->token, "asin") == 0)
             {
                 asinus(result);
-                printf("HERE %s\n", (*result)->token);
             }
             else if (strcmp((*rpn_ready)->token, "sqrt") == 0)
             {
                 square(result);
-                printf("HERE %s\n", (*result)->token);
             }
             else if (strcmp((*rpn_ready)->token, "ln") == 0)
             {
                 ln_func(result);
-                printf("HERE %s\n", (*result)->token);
             }
             else if (strcmp((*rpn_ready)->token, "log") == 0)
             {
                 log_func(result);
-                printf("HERE %s\n", (*result)->token);
             }
         }
         else
         {
-            printf("ELSE\n");
             stack *new = malloc(sizeof(stack));
             new->token = malloc(sizeof((*rpn_ready)->token) + 1);
             strcpy(new->token, (*rpn_ready)->token);
@@ -268,7 +249,6 @@ void unaries(char *input, char *dest)
         get_token(token, input + i, &i);
         if ((isdelim(prev_token[0]) || strlen(prev_token) == 0) && (strcmp(token, "+") == 0 || strcmp(token, "-") == 0))
         {
-            printf("a");
             copy[j] = '(';
             copy[j + 1] = '0';
             copy[j + 2] = token[0];
@@ -284,7 +264,7 @@ void unaries(char *input, char *dest)
             strcpy(copy + j, token);
             j += strlen(token);
         }
-        printf("copy %s    %i %i inp: %s  token %s   %s\n", copy, i, j, input + i, token, prev_token);
+        // printf("copy %s    %i %i inp: %s  token %s   %s\n", copy, i, j, input + i, token, prev_token);
         strcpy(prev_token, token);
     }
 
@@ -296,17 +276,17 @@ char *scan_rpn(char *inp)
     rpn* rpn_ready = NULL;
     char *input;
     unaries(inp, input);
-    printf("after unaries %s\n", input);
     dijkstra(input, &rpn_ready);
     stack* res_stack = NULL;
     rpn *copy = rpn_ready;
+    printf("input: %s\n", inp);
     while (copy)
     {
         printf("%s ", copy->token);
         copy = copy->next;
     }
-    printf("\n");
     calculate(&rpn_ready, &res_stack);
+    printf("\nresult: %s\n", res_stack->token);
     // while (rpn_ready)
     // {
     //     printf("%s ", rpn_ready->token);
@@ -317,5 +297,5 @@ char *scan_rpn(char *inp)
 
 int main()
 {
-    scan_rpn("-2^3");
+    scan_rpn("sin(-2)^2 + cos(-2)^2");
 }

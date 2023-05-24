@@ -96,19 +96,6 @@ void put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims, char
                 stack *temp = (*stack_for_delims);
                 (*stack_for_delims) = (*stack_for_delims)->prev;
                 free(temp);
-                // if ((*stack_for_delims) && isfunc((*stack_for_delims)->token))
-                // {
-                //     rpn *new = malloc(sizeof(rpn));
-                //     new->token = malloc(sizeof(token + 1));
-                //     new->next = NULL;
-                //     strcpy(new->token, (*stack_for_delims)->token);
-                //     new->token[strlen(new->token)] = '\0';
-                //     (*rpn_output)->next = new;
-                //     (*rpn_output) = new; 
-                //     stack *temp = (*stack_for_delims);
-                //     (*stack_for_delims) = (*stack_for_delims)->prev;
-                //     free(temp);
-                // }
             }
             else {
                 //пока приоритет О2 выше О1, перекладываем из стека в опн
@@ -167,21 +154,6 @@ void dijkstra(char *input, rpn **rpn_head)
     {
         get_token(token, input + i, &i);
         put_in_rpn(&rpn_output, rpn_head, &stack_for_delims, token);
-        // printf("STACK:\n");
-        // rpn *copy = rpn_head;
-        // while (copy)
-        // {
-        //     printf("%s ", copy->token);
-        //     copy = copy->next;
-        // }
-        // printf("\nRNP\n");
-        // stack *scopy = stack_for_delims;
-        // while (scopy)
-        // {
-        //     printf("%s ", scopy->token);
-        //     scopy = scopy->prev;
-        // }
-        // printf("\n\n");
     }
     while (stack_for_delims)
     {
