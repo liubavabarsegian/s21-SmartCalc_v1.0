@@ -2,67 +2,67 @@
 
 void sum(stack **result)
 {
-    char sum[10];
+    char sum[255];
     sprintf(sum, "%f", atof((*result)->token) + atof((*result)->prev->token));
     stack *temp = *result;
     *result = (*result)->prev;
     free(temp);
     free((*result)->token);
-    (*result)->token = malloc(sizeof(sum + 1));
+    (*result)->token = malloc(sizeof(sum) + 1);
     strcpy((*result)->token, sum);
 }
 
 void division(stack **result)
 {
-    char res[10];
+    char res[255];
     sprintf(res, "%f", atof((*result)->prev->token) / atof((*result)->token));
     stack *temp = *result;
     *result = (*result)->prev;
     free(temp);
     free((*result)->token);
-    (*result)->token = malloc(sizeof(res + 1));
+    (*result)->token = malloc(sizeof(res) + 1);
     strcpy((*result)->token, res);
 }
 
 void multiplication(stack **result)
 {
-    char res[10];
+    char res[255];
     sprintf(res, "%f", atof((*result)->prev->token) * atof((*result)->token));
     stack *temp = *result;
     *result = (*result)->prev;
     free(temp);
     free((*result)->token);
-    (*result)->token = malloc(sizeof(res + 1));
+    (*result)->token = malloc(sizeof(res) + 1);
     strcpy((*result)->token, res);
 }
 
 void difference(stack **result)
 {
-    char res[10];
+    char res[255];
     sprintf(res, "%f", atof((*result)->prev->token) - atof((*result)->token));
     stack *temp = *result;
     *result = (*result)->prev;
     free(temp);
     free((*result)->token);
-    (*result)->token = malloc(sizeof(res + 1));
+    (*result)->token = malloc(sizeof(res) + 1);
     strcpy((*result)->token, res);
 }
 
 void mod(stack **result)
 {
-    char res[10];
+    char res[255];
     sprintf(res, "%d", atoi((*result)->prev->token) % atoi((*result)->token));
     stack *temp = *result;
     *result = (*result)->prev;
     free(temp);
     free((*result)->token);
-    (*result)->token = malloc(sizeof(res + 1));
+    (*result)->token = malloc(sizeof(res) + 1);
     strcpy((*result)->token, res);
 }
 
 void power(stack **result)
 {
-    char res[10];
+    char res[255];
     sprintf(res, "%f", pow(atof((*result)->prev->token),atof((*result)->token)));
     stack *temp = *result;
     *result = (*result)->prev;
@@ -74,7 +74,7 @@ void power(stack **result)
 
 void sinus(stack **result)
 {
-    char res[10];
+    char res[255];
     sprintf(res, "%f", sin(atof((*result)->token)));
     free((*result)->token);
     (*result)->token = malloc(sizeof(strlen(res) + 1));
@@ -83,7 +83,7 @@ void sinus(stack **result)
 
 void cosinus(stack **result)
 {
-    char res[10];
+    char res[255];
     sprintf(res, "%f", cos(atof((*result)->token)));
     free((*result)->token);
     (*result)->token = malloc(sizeof(strlen(res) + 1));
@@ -92,7 +92,7 @@ void cosinus(stack **result)
 
 void tangent(stack **result)
 {
-    char res[10];
+    char res[255];
     sprintf(res, "%f", tan(atof((*result)->token)));
     free((*result)->token);
     (*result)->token = malloc(sizeof(strlen(res) + 1));
@@ -101,7 +101,7 @@ void tangent(stack **result)
 
 void atangent(stack **result)
 {
-    char res[10];
+    char res[255];
     sprintf(res, "%f", atan(atof((*result)->token)));
     free((*result)->token);
     (*result)->token = malloc(sizeof(strlen(res) + 1));
@@ -110,7 +110,7 @@ void atangent(stack **result)
 
 void asinus(stack **result)
 {
-    char res[10];
+    char res[255];
     sprintf(res, "%f", asin(atof((*result)->token)));
     free((*result)->token);
     (*result)->token = malloc(sizeof(strlen(res) + 1));
@@ -119,7 +119,7 @@ void asinus(stack **result)
 
 void acosinus(stack **result)
 {
-    char res[10];
+    char res[255];
     sprintf(res, "%f", acos(atof((*result)->token)));
     free((*result)->token);
     (*result)->token = malloc(sizeof(strlen(res) + 1));
@@ -128,7 +128,7 @@ void acosinus(stack **result)
 
 void square(stack **result)
 {
-    char res[10];
+    char res[255];
     sprintf(res, "%f", sqrt(atof((*result)->token)));
     free((*result)->token);
     (*result)->token = malloc(sizeof(strlen(res) + 1));
@@ -137,7 +137,7 @@ void square(stack **result)
 
 void ln_func(stack **result)
 {
-    char res[10];
+    char res[255];
     sprintf(res, "%f", log(atof((*result)->token)));
     free((*result)->token);
     (*result)->token = malloc(sizeof(strlen(res) + 1));
@@ -146,7 +146,7 @@ void ln_func(stack **result)
 
 void log_func(stack **result)
 {
-    char res[10];
+    char res[255];
     sprintf(res, "%f", log10(atof((*result)->token)));
     free((*result)->token);
     (*result)->token = malloc(sizeof(strlen(res) + 1));
@@ -157,8 +157,10 @@ void calculate(rpn **rpn_ready, stack **result)
 {
     while (*rpn_ready)
     {
-        if (*result == NULL && !isdelim((*rpn_ready)->token[0]))
+        printf("%s\n", (*rpn_ready)->token);
+        if (*result == NULL && !isdelim((*rpn_ready)->token[0]) && !isfunc((*rpn_ready)->token))
         {
+            printf("NULL\n");
             *result = malloc(sizeof(stack));
             (*result)->token = malloc(sizeof((*rpn_ready)->token + 1));
             (*result)->prev = NULL;
@@ -166,6 +168,7 @@ void calculate(rpn **rpn_ready, stack **result)
         }
         else if (isdelim((*rpn_ready)->token[0]) || isfunc((*rpn_ready)->token))
         {
+            printf("%d\n", strcmp((*rpn_ready)->token, "+") == 0);
             if (strcmp((*rpn_ready)->token, "+") == 0)
             {
                 sum(result);
@@ -242,10 +245,11 @@ void calculate(rpn **rpn_ready, stack **result)
                 printf("HERE %s\n", (*result)->token);
             }
         }
-        else if (!isdelim((*rpn_ready)->token[0]))
+        else
         {
+            printf("ELSE\n");
             stack *new = malloc(sizeof(stack));
-            new->token = malloc(sizeof((*rpn_ready)->token + 1));
+            new->token = malloc(sizeof((*rpn_ready)->token) + 1);
             strcpy(new->token, (*rpn_ready)->token);
             new->token[strlen(new->token)] = '\0';
             new->prev = *result;
@@ -255,9 +259,44 @@ void calculate(rpn **rpn_ready, stack **result)
     }
 }
 
-char *scan_rpn(char *input)
+void unaries(char *input, char *dest)
+{
+    char token[255], prev_token[255] = "", copy[255];
+    int i = 0, j = 0, n = 0;
+    while (input[i])
+    {
+        get_token(token, input + i, &i);
+        if ((isdelim(prev_token[0]) || strlen(prev_token) == 0) && (strcmp(token, "+") == 0 || strcmp(token, "-") == 0))
+        {
+            printf("a");
+            copy[j] = '(';
+            copy[j + 1] = '0';
+            copy[j + 2] = token[0];
+            get_token(token, input + i, &i);
+            j += 3;
+            strcpy(copy + j, token);
+            j += strlen(token);
+            copy[j] = ')';
+            j++;
+        }
+        else 
+        {
+            strcpy(copy + j, token);
+            j += strlen(token);
+        }
+        printf("copy %s    %i %i inp: %s  token %s   %s\n", copy, i, j, input + i, token, prev_token);
+        strcpy(prev_token, token);
+    }
+
+    strcpy(dest, copy);
+}
+
+char *scan_rpn(char *inp)
 {
     rpn* rpn_ready = NULL;
+    char *input;
+    unaries(inp, input);
+    printf("after unaries %s\n", input);
     dijkstra(input, &rpn_ready);
     stack* res_stack = NULL;
     rpn *copy = rpn_ready;
@@ -278,5 +317,5 @@ char *scan_rpn(char *input)
 
 int main()
 {
-  scan_rpn("sin(1)^2");
+    scan_rpn("-2^3");
 }

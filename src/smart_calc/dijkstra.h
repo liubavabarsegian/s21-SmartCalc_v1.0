@@ -20,6 +20,7 @@ typedef struct rpn {
 
 int isfunc(char *str);
 int isdelim(char c);
+char *get_token(char *token, char *prog, int *i);
 void dijkstra(char *input, rpn **rpn_head);
 
 #endif //SRC_SMART_CALC_DIJKSTRA_H_
