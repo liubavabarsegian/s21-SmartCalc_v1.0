@@ -23,6 +23,7 @@ public:
 private:
 //    Input_X *input_window;
     void append(QString text);
+    void show_graphic();
     void clicked_backspace();
     void clear();
     void equal();

@@ -13,11 +13,13 @@ SOURCES += \
     dijkstra.c \
     main.cpp \
     mainwindow.cpp \
+    qcustomplot.cpp \
     scan_rpn.c
 
 HEADERS += \
     dijkstra.h \
     mainwindow.h \
+    qcustomplot.h \
     scan_rpn.h
 
 FORMS += \
