@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "scan_rpn.h"
 
+//#include "input_x.h"
 extern "C" char* scan_rpn(const char *input);
 
 MainWindow::MainWindow(QWidget *parent)
@@ -45,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButton_AC, &QPushButton::clicked, this, &MainWindow::clear);
     connect(ui->pushButton_x, &QPushButton::clicked, this, [this]{append("x");});
     connect(ui->pushButton_equal, &QPushButton::clicked, this, [this]{equal();});
+
 }
 
 MainWindow::~MainWindow()
@@ -64,10 +66,25 @@ void MainWindow::clicked_backspace()
 
 void MainWindow::equal()
 {
-     ui->textEdit->setText(QString(scan_rpn(ui->textEdit->toPlainText().toStdString().c_str())));
+    QString input = ui->textEdit->toPlainText();
+    if (input.contains("x"))
+    {
+        if (ui->inputX->text() != "")
+        {
+            input.replace("x", ui->inputX->text());
+            qDebug("%s", input.toStdString().c_str());
+            ui->textEdit->setText(QString(scan_rpn(input.toStdString().c_str())));
+        }
+//        else
+            //error message
+    }
+    else {
+        ui->textEdit->setText(QString(scan_rpn(input.toStdString().c_str())));
+    }
 }
 
 void MainWindow::clear()
 {
     ui->textEdit->setText("");
+    ui->inputX->setText("");
 }

@@ -158,7 +158,7 @@ void dijkstra(char *input, rpn **rpn_head)
     while (stack_for_delims)
     {
         rpn *new = malloc(sizeof(rpn));
-        new->token = malloc(sizeof(token + 1));
+        new->token = malloc(sizeof(token) + 1);
         new->next = NULL;
         strcpy(new->token, stack_for_delims->token);
         new->token[strlen(new->token)] = '\0';

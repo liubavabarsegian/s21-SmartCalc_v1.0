@@ -274,17 +274,18 @@ void unaries(char *input, char *dest)
 char *scan_rpn(char *inp)
 {
     rpn* rpn_ready = NULL;
-    char *input;
+    char input[255];
     unaries(inp, input);
+    printf("s%s\n", input);
     dijkstra(input, &rpn_ready);
     stack* res_stack = NULL;
-    rpn *copy = rpn_ready;
-    printf("input: %s\n", inp);
-    while (copy)
-    {
-        printf("%s ", copy->token);
-        copy = copy->next;
-    }
+//    rpn *copy = rpn_ready;
+//    printf("input: %s\n", inp);
+//    while (copy)
+//    {
+//        printf("%s ", copy->token);
+//        copy = copy->next;
+//    }
     calculate(&rpn_ready, &res_stack);
     printf("\nresult: %s\n", res_stack->token);
     // while (rpn_ready)
@@ -295,7 +296,7 @@ char *scan_rpn(char *inp)
     return res_stack->token;
 }
 
-int main()
-{
-    scan_rpn("sin(-2)^2 + cos(-2)^2");
-}
+// int main()
+// {
+//     scan_rpn("sin(-2)^2 + cos(-2)^2");
+// }
