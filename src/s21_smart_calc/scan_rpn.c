@@ -286,7 +286,6 @@ void count_function(rpn **rpn_ready, stack **result)
         int i = strlen((*result)->token) - 1;
         while ((*result)->token[i] == '0')
         {
-            // printf("i: %d\n", i);
             char *copy;
             copy = malloc(i);
             strncpy(copy, (*result)->token, i);
