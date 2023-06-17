@@ -41,8 +41,8 @@ START_TEST(test_4) {
 END_TEST
 
 START_TEST(test_5) {
-    char input[] = "15";
-    double result_real = 15;
+    char input[] = "15.4 + 1.2";
+    double result_real = 15.4 + 1.2;
     char result_s21[255];
     scan_rpn(input, result_s21);
     ck_assert_float_eq(atof(result_s21), result_real);

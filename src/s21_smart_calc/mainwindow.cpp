@@ -73,6 +73,7 @@ void MainWindow::equal()
         if (ui->inputX->text() != "")
         {
             input.replace("x", ui->inputX->text());
+            input.replace(".", ",");
             qDebug("input: %s", input.toStdString().c_str());
             char result[255];
             scan_rpn((char *)input.toStdString().c_str(), result);
@@ -85,6 +86,7 @@ void MainWindow::equal()
     else {
         qDebug("input: %s", input.toStdString().c_str());
         char result[255];
+        input.replace(".", ",");
         scan_rpn((char *)input.toStdString().c_str(), result);
         qDebug("res: %s", result);
         ui->textEdit->setText(QString(result));
