@@ -15,9 +15,7 @@ int isdelim(char c)
 }
 
 int get_operator_priority(char *op) {
-    if (strcmp(op, "~") == 0)
-        return 4;
-    else if (strcmp(op, "(") == 0)
+    if (strcmp(op, "(") == 0)
         return 3;
     else if (strcmp(op, "^") == 0)
         return 2;
@@ -25,7 +23,7 @@ int get_operator_priority(char *op) {
         return 2;
     else if (strcmp(op, "*") == 0 || strcmp(op, "/") == 0 || strcmp(op, "%") == 0)
         return 1;
-    else if (strcmp(op, "+") == 0 )
+    else if (strcmp(op, "+") == 0 || strcmp(op, "-") == 0)
         return 0;
     else
         return -1; // error: unknown operator
@@ -64,7 +62,7 @@ char *get_token(char *token, char *prog, int *i)
     return token;
 }
 
-void put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims, char *token)
+int put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims, char *token)
 {
     if (isdelim(token[0]) || isfunc(token))
     {
@@ -98,9 +96,13 @@ void put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims, char
                 free(temp);
             }
             else {
+                if (get_operator_priority((*stack_for_delims)->token) == -1 || get_operator_priority(token) == -1)
+                    return FAILURE;
                 //пока приоритет О2 выше О1, перекладываем из стека в опн
                 while ((*stack_for_delims) && (strcmp((*stack_for_delims)->token, "(") != 0) && get_operator_priority((*stack_for_delims)->token) >= get_operator_priority(token))
                 {
+                    
+                    
                     rpn *new = malloc(sizeof(rpn));
                     new->token = malloc(sizeof(token + 1));
                     new->next = NULL;
@@ -142,9 +144,10 @@ void put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims, char
             (*rpn_output) = new;
         }
     }
+    return SUCCESS;
 }
 
-void dijkstra(char *input, rpn **rpn_head)
+int dijkstra(char *input, rpn **rpn_head)
 {
     int i = 0;
     char token[50];
@@ -153,7 +156,8 @@ void dijkstra(char *input, rpn **rpn_head)
     while (input[i])
     {
         get_token(token, input + i, &i);
-        put_in_rpn(&rpn_output, rpn_head, &stack_for_delims, token);
+        if (put_in_rpn(&rpn_output, rpn_head, &stack_for_delims, token) == FAILURE)
+            return FAILURE;
     }
     while (stack_for_delims)
     {
@@ -168,8 +172,5 @@ void dijkstra(char *input, rpn **rpn_head)
         stack_for_delims = stack_for_delims->prev;
         free(temp);
     }
+    return SUCCESS;
 }
-// int main()
-// {
-//   dijkstra("2 / ( ~32 + 3 ) * acos(sin(cos(5) + 4^2))");
-// }

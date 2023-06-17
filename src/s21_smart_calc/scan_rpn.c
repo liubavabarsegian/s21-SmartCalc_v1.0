@@ -66,7 +66,12 @@ void difference(stack **result)
 void mod(stack **result)
 {
     char res[255];
-    sprintf(res, "%d", atoi((*result)->prev->token) % atoi((*result)->token));
+    if (strchr((*result)->token, ',') || ((*result)->prev->token && (strchr((*result)->prev->token, ','))))
+        sprintf(res, "%f", fmod(atof((*result)->prev->token), atof((*result)->token)));
+    else if (strchr((*result)->token, '.') || ((*result)->prev->token && (strchr((*result)->prev->token, '.'))))
+        sprintf(res, "%f", fmod(atof((*result)->prev->token), atof((*result)->token)));
+    else
+        sprintf(res, "%d", atoi((*result)->prev->token) % atoi((*result)->token));
     stack *temp = *result;
     *result = (*result)->prev;
     free(temp);
@@ -282,7 +287,6 @@ void count_function(rpn **rpn_ready, stack **result)
     }
     if (strchr((*result)->token, ',') || strchr((*result)->token, '.'))
     {
-        //5
         int i = strlen((*result)->token) - 1;
         while ((*result)->token[i] == '0')
         {
@@ -302,11 +306,30 @@ void count_function(rpn **rpn_ready, stack **result)
     }
 }
 
-void calculate(rpn **rpn_ready, stack **result)
+int several_dots(char *str)
 {
+    int i = 0;
+    int count = 0;
+    while (str[i])
+    {
+        if (str[i] == '.' || str[i] == ',')
+            count++;
+        i++;
+    }
+    return (count > 1);
+}
+
+int calculate(rpn **rpn_ready, stack **result)
+{
+    int flag = SUCCESS;
     while (*rpn_ready)
     {
-        if (*result == NULL && !isdelim((*rpn_ready)->token[0]) && !isfunc((*rpn_ready)->token))
+        if (*rpn_ready && (*rpn_ready)->token && several_dots((*rpn_ready)->token))
+        {    
+            flag = FAILURE;
+            break;
+        }
+        else if (*result == NULL && !isdelim((*rpn_ready)->token[0]) && !isfunc((*rpn_ready)->token))
         {
             *result = malloc(sizeof(stack));
             (*result)->token = malloc(sizeof((*rpn_ready)->token + 1));
@@ -321,13 +344,20 @@ void calculate(rpn **rpn_ready, stack **result)
         {
             stack *new = malloc(sizeof(stack));
             new->token = malloc(sizeof((*rpn_ready)->token) + 1);
-            strcpy(new->token, (*rpn_ready)->token);
-            new->token[strlen(new->token)] = '\0';
-            new->prev = *result;
-            *result = new;
+            if (!new || !new->token)
+                flag = FAILURE;
+            else
+            {
+                strcpy(new->token, (*rpn_ready)->token);
+                new->token[strlen(new->token)] = '\0';
+                new->prev = *result;
+                *result = new;
+            }
         }
-        (*rpn_ready) = (*rpn_ready)->next;
+        if (flag != FAILURE)
+            (*rpn_ready) = (*rpn_ready)->next;
     }
+    return flag;
 }
 
 void unaries(char *input, char *dest)
@@ -348,7 +378,6 @@ void unaries(char *input, char *dest)
             j += strlen(token);
             copy[j] = ')';
             j++;
-
         }
         else
         {
@@ -362,21 +391,38 @@ void unaries(char *input, char *dest)
 
 int scan_rpn(char *inp, char *result)
 {
-    rpn* rpn_ready = NULL;
-    char input[255];
-    unaries(inp, input);
-    dijkstra(input, &rpn_ready);
-    stack* res_stack = NULL;
-    calculate(&rpn_ready, &res_stack);
-    strcpy(result, res_stack->token);
-    free(res_stack->token);
-    return 0;
+    int flag = SUCCESS;
+    if (strlen(inp) == 0)
+        flag = FAILURE;
+    else if (!result)
+        flag = FAILURE;
+    else 
+    {
+        rpn* rpn_ready = NULL;
+        char input[255];
+        unaries(inp, input);
+        if (dijkstra(input, &rpn_ready) == FAILURE)
+            flag = FAILURE;
+        else 
+        {
+            stack* res_stack = NULL;
+            if (calculate(&rpn_ready, &res_stack) == FAILURE)
+                flag = FAILURE;
+            else
+                strcpy(result, res_stack->token);
+            if (res_stack && res_stack->token)
+                free(res_stack->token);
+            if (res_stack)
+                free(res_stack);
+        }
+    }
+    return flag;
 }
 
 // int main()
 // {
-//    char input[] = "5/2";
+//    char input[] = "9^4 - 78 / 5";
 //    char result_s21[255];
-//    scan_rpn(input, result_s21);
+//    printf("%d\n", scan_rpn(input, result_s21));
 //    printf("%s\n", result_s21);
 // }
