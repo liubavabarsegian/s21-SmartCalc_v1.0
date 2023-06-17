@@ -360,8 +360,9 @@ int calculate(rpn **rpn_ready, stack **result)
     return flag;
 }
 
-void unaries(char *input, char *dest)
+int unaries(char *input, char *dest)
 {
+    int flag = SUCCESS;
     char token[255], prev_token[255] = "", copy[255] = "";
     int i = 0, j = 0;
     while (input[i])
@@ -379,6 +380,8 @@ void unaries(char *input, char *dest)
             copy[j] = ')';
             j++;
         }
+        // if ((strlen(prev_token) == 0 || isdelim(prev_token[0])) && isdelim(token[0]))
+        //     flag = FAILURE;
         else
         {
             strcpy(copy + j, token);
@@ -387,6 +390,7 @@ void unaries(char *input, char *dest)
         strcpy(prev_token, token);
     }
     strcpy(dest, copy);
+    return flag;
 }
 
 int scan_rpn(char *inp, char *result)

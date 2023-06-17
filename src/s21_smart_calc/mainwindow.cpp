@@ -75,14 +75,20 @@ void MainWindow::equal()
         input.replace("x", ui->inputX->text());
         input.replace(".", ",");
         char result[255];
-        scan_rpn((char *)input.toStdString().c_str(), result);
-        ui->textEdit->setText(QString(result).replace(",", "."));
+        int flag = scan_rpn((char *)input.toStdString().c_str(), result);
+        if (flag == SUCCESS)
+            ui->textEdit->setText(QString(result).replace(",", "."));
+        else
+            ui->textEdit->setText("Incorrect input!");
     }
     else {
         char result[255];
         input.replace(".", ",");
-        scan_rpn((char *)input.toStdString().c_str(), result);
-        ui->textEdit->setText(QString(result).replace(",", "."));
+        int flag = scan_rpn((char *)input.toStdString().c_str(), result);
+        if (flag == SUCCESS)
+            ui->textEdit->setText(QString(result).replace(",", "."));
+        else
+            ui->textEdit->setText("Incorrect input!");
     }
 }
 
@@ -114,7 +120,11 @@ void MainWindow::show_graphic()
         formula.replace("x", QString::number(x1));
         formula.replace(".", ",");
         char result[255];
-        scan_rpn((char *)formula.toStdString().c_str(), result);
+        int flag = scan_rpn((char *)formula.toStdString().c_str(), result);
+        if (flag == SUCCESS)
+            ui->textEdit->setText(QString(result).replace(",", "."));
+        else
+            ui->textEdit->setText("Incorrect input!");
         Y.push_back(atof(result));
         formula = temp;
 

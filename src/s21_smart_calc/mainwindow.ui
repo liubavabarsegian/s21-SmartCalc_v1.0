@@ -1073,8 +1073,8 @@ border-radius: 10px;</string>
     </property>
     <property name="font">
      <font>
-      <family>Yrsa Light</family>
-      <pointsize>18</pointsize>
+      <family>Ubuntu</family>
+      <pointsize>14</pointsize>
      </font>
     </property>
     <property name="styleSheet">

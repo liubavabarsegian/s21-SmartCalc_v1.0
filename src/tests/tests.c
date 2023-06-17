@@ -132,8 +132,77 @@ START_TEST(test_15) { //error
     char input[] ="0.99 + 0.999 =";  
     char result_s21[255];
     int s21_flag = scan_rpn(input, result_s21);
-    printf("eq: %s\n", result_s21);
     ck_assert_int_eq(s21_flag, FAILURE);
+}
+END_TEST
+
+START_TEST(test_16) { //error
+    char input[] ="0.00001+- 0.999=";  
+    char result_s21[255];
+    int s21_flag = scan_rpn(input, result_s21);
+    ck_assert_int_eq(s21_flag, FAILURE);
+}
+END_TEST
+
+START_TEST(test_17) { //error
+    char input[] ="--+";  
+    char result_s21[255];
+    int s21_flag = scan_rpn(input, result_s21);
+    ck_assert_int_eq(s21_flag, FAILURE);
+}
+END_TEST
+
+START_TEST(test_18) { //error
+    char input[] ="^0.999";  
+    char result_s21[255];
+    int s21_flag = scan_rpn(input, result_s21);
+    ck_assert_int_eq(s21_flag, FAILURE);
+}
+END_TEST
+
+START_TEST(test_19) { 
+    char input[] ="sqrt(35)";  
+    double result_real = sqrt(35);
+    char result_s21[255];
+    scan_rpn(input, result_s21);
+    ck_assert_float_eq(atof(result_s21), result_real);
+}
+END_TEST
+
+START_TEST(test_20) { 
+    char input[] ="sin(5.89*67)-cos(4.99)-log(45.78)";  
+    double result_real = sin(5.89*67) - cos(4.99) - log10(45.78);
+    char result_s21[255];
+    scan_rpn(input, result_s21);
+    ck_assert_float_eq(atof(result_s21), result_real);
+}
+END_TEST
+
+START_TEST(test_21) { 
+    char input[] ="sin(5.8*67)";  
+    double result_real = sin(5.8*67);
+    char result_s21[255];
+    scan_rpn(input, result_s21);
+    ck_assert_float_eq(atof(result_s21), result_real);
+}
+END_TEST
+
+
+START_TEST(test_22) { 
+    char input[] ="cos(5.8*67)";  
+    double result_real = cos(5.8*67);
+    char result_s21[255];
+    scan_rpn(input, result_s21);
+    ck_assert_float_eq(atof(result_s21), result_real);
+}
+END_TEST
+
+START_TEST(test_23) { 
+    char input[] ="asin(0.2)";  
+    double result_real = asin(0.2);
+    char result_s21[255];
+    scan_rpn(input, result_s21);
+    ck_assert_float_eq(atof(result_s21), result_real);
 }
 END_TEST
 
@@ -153,6 +222,14 @@ void calc_tests(TCase *tc1_1) {
     tcase_add_test(tc1_1, test_13);
     tcase_add_test(tc1_1, test_14);
     tcase_add_test(tc1_1, test_15);
+    tcase_add_test(tc1_1, test_16);
+    tcase_add_test(tc1_1, test_17);
+    tcase_add_test(tc1_1, test_18);
+    tcase_add_test(tc1_1, test_19);
+    tcase_add_test(tc1_1, test_20);
+    tcase_add_test(tc1_1, test_21);
+    tcase_add_test(tc1_1, test_22);
+    tcase_add_test(tc1_1, test_23);
 }
 
 int main(void) {

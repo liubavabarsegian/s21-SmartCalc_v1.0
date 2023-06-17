@@ -18,10 +18,8 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-//    QString X_value;
     Ui::MainWindow *ui;
 private:
-//    Input_X *input_window;
     void append(QString text);
     void show_graphic();
     void clicked_backspace();
