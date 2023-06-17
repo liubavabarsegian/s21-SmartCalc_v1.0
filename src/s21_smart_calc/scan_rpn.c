@@ -153,6 +153,12 @@ void log_func(stack **result)
     strcpy((*result)->token, res);
 }
 
+
+// void count_function(rpn **rpn_ready)
+// {
+
+// }
+
 void calculate(rpn **rpn_ready, stack **result)
 {
     while (*rpn_ready)
@@ -208,7 +214,7 @@ void calculate(rpn **rpn_ready, stack **result)
             }
             else if (strcmp((*rpn_ready)->token, "acos") == 0)
             {
-                cosinus(result);
+                acosinus(result);
             }
             else if (strcmp((*rpn_ready)->token, "asin") == 0)
             {
@@ -258,9 +264,9 @@ void unaries(char *input, char *dest)
             j += strlen(token);
             copy[j] = ')';
             j++;
-            
+
         }
-        else 
+        else
         {
             strcpy(copy + j, token);
             j += strlen(token);
@@ -285,12 +291,12 @@ int scan_rpn(char *inp, char *result)
     return 0;
 }
 
-// int main()
-// {
-//     char input[] = "100+100";
-//     double result_real = 100 + 100;
-//     char result_s21[255];
-//     scan_rpn(input, result_s21);
-//     printf("%f\n", result_real);
-//     printf("%f\n", atof(result_s21));
-// }
+//int main()
+//{
+//    char input[] = "-5.2";
+//    double result_real = -5.4;
+//    char result_s21[255];
+//    scan_rpn(input, result_s21);
+//    // printf("%f\n", result_real);
+//    printf("%f\n", atof(result_s21));
+//}

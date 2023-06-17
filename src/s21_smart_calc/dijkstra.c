@@ -37,12 +37,12 @@ char *get_token(char *token, char *prog, int *i)
     temp = token;
     *temp = '\0';
 
-    if(!*prog) return NULL; 
-    while(isspace(*prog)) 
+    if(!*prog) return NULL;
+    while(isspace(*prog))
     {
         ++prog;
         ++(*i);
-    }  
+    }
     if(strchr("+-~*/%^=()", *prog)){
         *temp++ = *prog++;
         ++(*i);
@@ -54,7 +54,7 @@ char *get_token(char *token, char *prog, int *i)
         }
     }
     else if(isdigit(*prog)) {
-        while(!isdelim(*prog)) 
+        while(!isdelim(*prog))
         {
             *temp++ = *prog++;
             ++(*i);
@@ -75,7 +75,7 @@ void put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims, char
             strcpy((*stack_for_delims)->token, token);
             (*stack_for_delims)->prev = NULL;
         }
-        else 
+        else
         {
             //close brace
             if (strcmp(token, ")") == 0)
@@ -88,7 +88,7 @@ void put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims, char
                     strcpy(new->token, (*stack_for_delims)->token);
                     new->token[strlen(new->token)] = '\0';
                     (*rpn_output)->next = new;
-                    (*rpn_output) = new; 
+                    (*rpn_output) = new;
                     stack *temp = (*stack_for_delims);
                     (*stack_for_delims) = (*stack_for_delims)->prev;
                     free(temp);
@@ -107,7 +107,7 @@ void put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims, char
                     strcpy(new->token, (*stack_for_delims)->token);
                     new->token[strlen(new->token)] = '\0';
                     (*rpn_output)->next = new;
-                    (*rpn_output) = new; 
+                    (*rpn_output) = new;
                     stack *temp = (*stack_for_delims);
                     (*stack_for_delims) = (*stack_for_delims)->prev;
                     free(temp);
@@ -117,11 +117,11 @@ void put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims, char
                 strcpy(new->token, token);
                 new->token[strlen(new->token)] = '\0';
                 new->prev = (*stack_for_delims);
-                (*stack_for_delims) = new; 
+                (*stack_for_delims) = new;
             }
         }
     }
-    else 
+    else
     {
         if ((*rpn_output) == NULL)
         {
@@ -139,7 +139,7 @@ void put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims, char
             strcpy(new->token, token);
             new->token[strlen(new->token)] = '\0';
             (*rpn_output)->next = new;
-            (*rpn_output) = new; 
+            (*rpn_output) = new;
         }
     }
 }
@@ -163,7 +163,7 @@ void dijkstra(char *input, rpn **rpn_head)
         strcpy(new->token, stack_for_delims->token);
         new->token[strlen(new->token)] = '\0';
         rpn_output->next = new;
-        rpn_output = new; 
+        rpn_output = new;
         stack *temp = stack_for_delims;
         stack_for_delims = stack_for_delims->prev;
         free(temp);

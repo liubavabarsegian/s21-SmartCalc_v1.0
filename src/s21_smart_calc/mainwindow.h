@@ -5,11 +5,11 @@
 #include <QPushButton>
 #include <QLineEdit>
 
+extern "C" int scan_rpn(char *inp, char *result);
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
-
-//class Input_X;
 
 class MainWindow : public QMainWindow
 {

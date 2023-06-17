@@ -3,9 +3,6 @@
 #include "scan_rpn.h"
 #include "qcustomplot.h"
 
-//#include "input_x.h"
-extern "C" char* scan_rpn(const char *input);
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -76,16 +73,21 @@ void MainWindow::equal()
         if (ui->inputX->text() != "")
         {
             input.replace("x", ui->inputX->text());
-            qDebug("%s", input.toStdString().c_str());
-            char *result;
-            scan_rpn(input.toStdString().c_str(), result);
+            qDebug("input: %s", input.toStdString().c_str());
+            char result[255];
+            scan_rpn((char *)input.toStdString().c_str(), result);
+            qDebug("res: %s", result);
             ui->textEdit->setText(QString(result));
         }
 //        else
             //error message
     }
     else {
-        ui->textEdit->setText(QString(scan_rpn(input.toStdString().c_str())));
+        qDebug("input: %s", input.toStdString().c_str());
+        char result[255];
+        scan_rpn((char *)input.toStdString().c_str(), result);
+        qDebug("res: %s", result);
+        ui->textEdit->setText(QString(result));
     }
 }
 
@@ -107,25 +109,25 @@ void MainWindow::show_graphic()
 
 //    ui->customPlot->graph(0)->setChannelFillGraph(ui->customPlot->graph(1));
 
-    double x1 = std::atof("-5");//ui->x1->text().toLocal8Bit().data());
-    double x2 = std::atof("5");//ui->x2->text().toLocal8Bit().data());
+    double x1 = std::atof("-10");//ui->x1->text().toLocal8Bit().data());
+    double x2 = std::atof("10");//ui->x2->text().toLocal8Bit().data());
     QString formula = ui->textEdit->toPlainText();
     QByteArray b_formula = formula.toLocal8Bit();
     QString temp;
     QVector<double> X, Y;
-    int result_flag = 0;
+    // int result_flag = 0;
 
     double step = (x2 - x1) / 1000;
-    for (; x1 <= x2; x1 += step) {
+    for (; x1 <= x2; x1 += step + 0.001) {
         QString s_x1 = QString::number(x1);
-        QByteArray b_x1 = s_x1.toLocal8Bit();
 
         X.push_back(x1);
         temp = formula;
         formula.replace("x", QString::number(x1));
+        formula.replace(".", ",");
         qDebug("%s", formula.toStdString().c_str());
-        char *result;
-        scan_rpn(formula.toStdString().c_str(), result);
+        char result[255];
+        scan_rpn((char *)formula.toStdString().c_str(), result);
         Y.push_back(atof(result));
         formula = temp;
 

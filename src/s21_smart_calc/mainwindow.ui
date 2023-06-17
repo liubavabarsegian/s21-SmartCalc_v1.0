@@ -49,7 +49,7 @@ border-radius: 25px;</string>
 border-radius: 25px;</string>
     </property>
     <property name="text">
-     <string>.</string>
+     <string>,</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_equal">
