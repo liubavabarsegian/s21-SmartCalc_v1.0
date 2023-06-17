@@ -153,11 +153,69 @@ void log_func(stack **result)
     strcpy((*result)->token, res);
 }
 
-
-// void count_function(rpn **rpn_ready)
-// {
-
-// }
+void count_function(rpn **rpn_ready, stack **result)
+{
+    if (strcmp((*rpn_ready)->token, "+") == 0)
+    {
+        sum(result);
+    }
+    else if (strcmp((*rpn_ready)->token, "/") == 0)
+    {
+        division(result);
+    }
+    else if (strcmp((*rpn_ready)->token, "*") == 0)
+    {
+        multiplication(result);
+    }
+    else if (strcmp((*rpn_ready)->token, "-") == 0)
+    {
+        difference(result);
+    }
+    else if (strcmp((*rpn_ready)->token, "%") == 0)
+    {
+        mod(result);
+    }
+    else if (strcmp((*rpn_ready)->token, "^") == 0)
+    {
+        power(result);
+    }
+    else if (strcmp((*rpn_ready)->token, "sin") == 0)
+    {
+        sinus(result);
+    }
+    else if (strcmp((*rpn_ready)->token, "cos") == 0)
+    {
+        cosinus(result);
+    }
+    else if (strcmp((*rpn_ready)->token, "tan") == 0)
+    {
+        tangent(result);
+    }
+    else if (strcmp((*rpn_ready)->token, "atan") == 0)
+    {
+        atangent(result);
+    }
+    else if (strcmp((*rpn_ready)->token, "acos") == 0)
+    {
+        acosinus(result);
+    }
+    else if (strcmp((*rpn_ready)->token, "asin") == 0)
+    {
+        asinus(result);
+    }
+    else if (strcmp((*rpn_ready)->token, "sqrt") == 0)
+    {
+        square(result);
+    }
+    else if (strcmp((*rpn_ready)->token, "ln") == 0)
+    {
+        ln_func(result);
+    }
+    else if (strcmp((*rpn_ready)->token, "log") == 0)
+    {
+        log_func(result);
+    }
+}
 
 void calculate(rpn **rpn_ready, stack **result)
 {
@@ -172,66 +230,7 @@ void calculate(rpn **rpn_ready, stack **result)
         }
         else if (isdelim((*rpn_ready)->token[0]) || isfunc((*rpn_ready)->token))
         {
-            if (strcmp((*rpn_ready)->token, "+") == 0)
-            {
-                sum(result);
-            }
-            else if (strcmp((*rpn_ready)->token, "/") == 0)
-            {
-                division(result);
-            }
-            else if (strcmp((*rpn_ready)->token, "*") == 0)
-            {
-                multiplication(result);
-            }
-            else if (strcmp((*rpn_ready)->token, "-") == 0)
-            {
-                difference(result);
-            }
-            else if (strcmp((*rpn_ready)->token, "%") == 0)
-            {
-                mod(result);
-            }
-            else if (strcmp((*rpn_ready)->token, "^") == 0)
-            {
-                power(result);
-            }
-            else if (strcmp((*rpn_ready)->token, "sin") == 0)
-            {
-                sinus(result);
-            }
-            else if (strcmp((*rpn_ready)->token, "cos") == 0)
-            {
-                cosinus(result);
-            }
-            else if (strcmp((*rpn_ready)->token, "tan") == 0)
-            {
-                tangent(result);
-            }
-            else if (strcmp((*rpn_ready)->token, "atan") == 0)
-            {
-                atangent(result);
-            }
-            else if (strcmp((*rpn_ready)->token, "acos") == 0)
-            {
-                acosinus(result);
-            }
-            else if (strcmp((*rpn_ready)->token, "asin") == 0)
-            {
-                asinus(result);
-            }
-            else if (strcmp((*rpn_ready)->token, "sqrt") == 0)
-            {
-                square(result);
-            }
-            else if (strcmp((*rpn_ready)->token, "ln") == 0)
-            {
-                ln_func(result);
-            }
-            else if (strcmp((*rpn_ready)->token, "log") == 0)
-            {
-                log_func(result);
-            }
+            count_function(rpn_ready, result);
         }
         else
         {
