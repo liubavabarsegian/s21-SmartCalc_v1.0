@@ -122,12 +122,16 @@ void MainWindow::show_graphic()
         char result[255];
         int flag = scan_rpn((char *)formula.toStdString().c_str(), result);
         if (flag == SUCCESS)
+        {
             ui->textEdit->setText(QString(result).replace(",", "."));
+            Y.push_back(atof(result));
+            formula = temp;
+        }
         else
+        {
             ui->textEdit->setText("Incorrect input!");
-        Y.push_back(atof(result));
-        formula = temp;
-
+            break;
+        }
     }
     ui->customPlot->graph(0)->addData(X,Y);
     ui->customPlot->replot();

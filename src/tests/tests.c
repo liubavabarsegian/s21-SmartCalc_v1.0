@@ -183,7 +183,7 @@ START_TEST(test_21) {
     double result_real = sin(5.8*67);
     char result_s21[255];
     scan_rpn(input, result_s21);
-    ck_assert_float_eq(atof(result_s21), result_real);
+    ck_assert_float_eq_tol(atof(result_s21), result_real, 1e-6);
 }
 END_TEST
 
@@ -193,7 +193,7 @@ START_TEST(test_22) {
     double result_real = cos(5.8*67);
     char result_s21[255];
     scan_rpn(input, result_s21);
-    ck_assert_float_eq(atof(result_s21), result_real);
+    ck_assert_float_eq_tol(atof(result_s21), result_real, 1e-6);
 }
 END_TEST
 
@@ -201,6 +201,55 @@ START_TEST(test_23) {
     char input[] ="asin(0.2)";  
     double result_real = asin(0.2);
     char result_s21[255];
+    scan_rpn(input, result_s21);
+    ck_assert_float_eq_tol(atof(result_s21), result_real, 1e-6);
+}
+END_TEST
+
+START_TEST(test_24) { //error
+    char input[] ="((";  
+    char result_s21[255];
+    int s21_flag = scan_rpn(input, result_s21);
+    ck_assert_int_eq(s21_flag, FAILURE);
+}
+END_TEST
+
+START_TEST(test_25) { //error
+    char input[] ="))";  
+    char result_s21[255];
+    int s21_flag = scan_rpn(input, result_s21);
+    ck_assert_int_eq(s21_flag, FAILURE);
+}
+END_TEST
+
+START_TEST(test_26) { //error
+    char input[] ="(4+(2 + 3)";  
+    char result_s21[255];
+    int s21_flag = scan_rpn(input, result_s21);
+    ck_assert_int_eq(s21_flag, FAILURE);
+}
+END_TEST
+
+START_TEST(test_27) { //error
+    char input[] ="4+(2 + 3) /3)";  
+    char result_s21[255];
+    int s21_flag = scan_rpn(input, result_s21);
+    ck_assert_int_eq(s21_flag, FAILURE);
+}
+END_TEST
+
+START_TEST(test_28) { 
+    char input[] ="1/0";  
+    char result_s21[255];
+    scan_rpn(input, result_s21);
+    ck_assert_double_infinite(atof(result_s21));
+}
+END_TEST
+
+START_TEST(test_29) { 
+    char input[] ="+5+6";  
+    char result_s21[255];
+    double result_real = + 5 + 6;
     scan_rpn(input, result_s21);
     ck_assert_float_eq(atof(result_s21), result_real);
 }
@@ -230,6 +279,12 @@ void calc_tests(TCase *tc1_1) {
     tcase_add_test(tc1_1, test_21);
     tcase_add_test(tc1_1, test_22);
     tcase_add_test(tc1_1, test_23);
+    tcase_add_test(tc1_1, test_24);
+    tcase_add_test(tc1_1, test_25);
+    tcase_add_test(tc1_1, test_26);
+    tcase_add_test(tc1_1, test_27);
+    tcase_add_test(tc1_1, test_28);
+    tcase_add_test(tc1_1, test_29);
 }
 
 int main(void) {

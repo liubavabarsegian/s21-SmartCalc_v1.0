@@ -1,8 +1,10 @@
 #include "scan_rpn.h"
 
-void sum(stack **result)
+int sum(stack **result)
 {
     char sum[255];
+    if (!(*result) || !(*result)->token || !(*result)->prev || !(*result)->prev->token)
+        return FAILURE;
     if (strchr((*result)->token, ',') || ((*result)->prev->token && (strchr((*result)->prev->token, ','))))
         sprintf(sum, "%lf", atof((*result)->token) + atof((*result)->prev->token));
     else if (strchr((*result)->token, '.') || ((*result)->prev->token && (strchr((*result)->prev->token, '.'))))
@@ -15,10 +17,13 @@ void sum(stack **result)
     free((*result)->token);
     (*result)->token = malloc(sizeof(sum) + 1);
     strcpy((*result)->token, sum);
+    return SUCCESS;
 }
 
-void division(stack **result)
+int division(stack **result)
 {
+    if (!(*result) || !(*result)->token || !(*result)->prev || !(*result)->prev->token)
+        return FAILURE;
     char res[255];
     sprintf(res, "%lf", atof((*result)->prev->token) / atof((*result)->token));
     stack *temp = *result;
@@ -27,11 +32,14 @@ void division(stack **result)
     free((*result)->token);
     (*result)->token = malloc(sizeof(res) + 1);
     strcpy((*result)->token, res);
+    return SUCCESS;
 }
 
-void multiplication(stack **result)
+int multiplication(stack **result)
 {
     char res[255];
+    if (!(*result) || !(*result)->token || !(*result)->prev || !(*result)->prev->token)
+        return FAILURE;
     if (strchr((*result)->token, ',') || ((*result)->prev->token && (strchr((*result)->prev->token, ','))))
         sprintf(res, "%lf", atof((*result)->prev->token) * atof((*result)->token));
     else if (strchr((*result)->token, '.') || ((*result)->prev->token && (strchr((*result)->prev->token, '.'))))
@@ -44,11 +52,14 @@ void multiplication(stack **result)
     free((*result)->token);
     (*result)->token = malloc(sizeof(res) + 1);
     strcpy((*result)->token, res);
+    return SUCCESS;
 }
 
-void difference(stack **result)
+int difference(stack **result)
 {
     char res[255];
+    if (!(*result) || !(*result)->token || !(*result)->prev || !(*result)->prev->token)
+        return FAILURE;
     if (strchr((*result)->token, ',') || ((*result)->prev->token && (strchr((*result)->prev->token, ','))))
         sprintf(res, "%lf", atof((*result)->prev->token) - atof((*result)->token));
     else if (strchr((*result)->token, '.') || ((*result)->prev->token && (strchr((*result)->prev->token, '.'))))
@@ -61,11 +72,14 @@ void difference(stack **result)
     free((*result)->token);
     (*result)->token = malloc(sizeof(res) + 1);
     strcpy((*result)->token, res);
+    return SUCCESS;
 }
 
-void mod(stack **result)
+int mod(stack **result)
 {
     char res[255];
+    if (!(*result) || !(*result)->token || !(*result)->prev || !(*result)->prev->token)
+        return FAILURE;
     if (strchr((*result)->token, ',') || ((*result)->prev->token && (strchr((*result)->prev->token, ','))))
         sprintf(res, "%f", fmod(atof((*result)->prev->token), atof((*result)->token)));
     else if (strchr((*result)->token, '.') || ((*result)->prev->token && (strchr((*result)->prev->token, '.'))))
@@ -78,11 +92,14 @@ void mod(stack **result)
     free((*result)->token);
     (*result)->token = malloc(sizeof(res) + 1);
     strcpy((*result)->token, res);
+    return SUCCESS;
 }
 
-void power(stack **result)
+int power(stack **result)
 {
     char res[255];
+    if (!(*result) || !(*result)->token || !(*result)->prev || !(*result)->prev->token)
+        return FAILURE;
     if (strchr((*result)->token, ',') || ((*result)->prev->token && (strchr((*result)->prev->token, ','))))
         sprintf(res, "%lf", pow(atof((*result)->prev->token),atof((*result)->token)));
     else if (strchr((*result)->token, '.') || ((*result)->prev->token && (strchr((*result)->prev->token, '.'))))
@@ -95,11 +112,14 @@ void power(stack **result)
     free((*result)->token);
     (*result)->token = malloc(sizeof(strlen(res) + 1));
     strcpy((*result)->token, res);
+    return SUCCESS;
 }
 
-void sinus(stack **result)
+int sinus(stack **result)
 {
     char res[255];
+    if (!(*result) || !(*result)->token)
+        return FAILURE;
     if (strchr((*result)->token, ','))
         sprintf(res, "%lf", sin(atof((*result)->token)));
     else if (strchr((*result)->token, '.'))
@@ -109,11 +129,14 @@ void sinus(stack **result)
     free((*result)->token);
     (*result)->token = malloc(sizeof(strlen(res) + 1));
     strcpy((*result)->token, res);
+    return SUCCESS;
 }
 
-void cosinus(stack **result)
+int cosinus(stack **result)
 {
     char res[255];
+    if (!(*result) || !(*result)->token)
+        return FAILURE;
     if (strchr((*result)->token, ','))
         sprintf(res, "%lf", cos(atof((*result)->token)));
     else if (strchr((*result)->token, '.'))
@@ -123,11 +146,14 @@ void cosinus(stack **result)
     free((*result)->token);
     (*result)->token = malloc(sizeof(strlen(res) + 1));
     strcpy((*result)->token, res);
+    return SUCCESS;
 }
 
-void tangent(stack **result)
+int tangent(stack **result)
 {
     char res[255];
+    if (!(*result) || !(*result)->token)
+        return FAILURE;
     if (strchr((*result)->token, ','))
         sprintf(res, "%lf", tan(atof((*result)->token)));
     else if (strchr((*result)->token, '.'))
@@ -137,11 +163,14 @@ void tangent(stack **result)
     free((*result)->token);
     (*result)->token = malloc(sizeof(strlen(res) + 1));
     strcpy((*result)->token, res);
+    return SUCCESS;
 }
 
-void atangent(stack **result)
+int atangent(stack **result)
 {
     char res[255];
+    if (!(*result) || !(*result)->token)
+        return FAILURE;
     if (strchr((*result)->token, ','))
         sprintf(res, "%lf", atan(atof((*result)->token)));
     else if (strchr((*result)->token, '.'))
@@ -151,11 +180,14 @@ void atangent(stack **result)
     free((*result)->token);
     (*result)->token = malloc(sizeof(strlen(res) + 1));
     strcpy((*result)->token, res);
+    return SUCCESS;
 }
 
-void asinus(stack **result)
+int asinus(stack **result)
 {
     char res[255];
+    if (!(*result) || !(*result)->token)
+        return FAILURE;
     if (strchr((*result)->token, ','))
         sprintf(res, "%lf", asin(atof((*result)->token)));
     else if (strchr((*result)->token, '.'))
@@ -165,11 +197,14 @@ void asinus(stack **result)
     free((*result)->token);
     (*result)->token = malloc(sizeof(strlen(res) + 1));
     strcpy((*result)->token, res);
+    return SUCCESS;
 }
 
-void acosinus(stack **result)
+int acosinus(stack **result)
 {
     char res[255];
+    if (!(*result) || !(*result)->token)
+        return FAILURE;
     if (strchr((*result)->token, ','))
         sprintf(res, "%lf", acos(atof((*result)->token)));
     else if (strchr((*result)->token, '.'))
@@ -179,11 +214,14 @@ void acosinus(stack **result)
     free((*result)->token);
     (*result)->token = malloc(sizeof(strlen(res) + 1));
     strcpy((*result)->token, res);
+    return SUCCESS;
 }
 
-void square(stack **result)
+int square(stack **result)
 {
     char res[255];
+    if (!(*result) || !(*result)->token)
+        return FAILURE;
     if (strchr((*result)->token, ','))
         sprintf(res, "%lf", sqrt(atof((*result)->token)));
     else if (strchr((*result)->token, '.'))
@@ -193,11 +231,14 @@ void square(stack **result)
     free((*result)->token);
     (*result)->token = malloc(sizeof(strlen(res) + 1));
     strcpy((*result)->token, res);
+    return SUCCESS;
 }
 
-void ln_func(stack **result)
+int ln_func(stack **result)
 {
     char res[255];
+    if (!(*result) || !(*result)->token)
+        return FAILURE;
     if (strchr((*result)->token, ','))
         sprintf(res, "%lf", log(atof((*result)->token)));
     else if (strchr((*result)->token, '.'))
@@ -207,11 +248,14 @@ void ln_func(stack **result)
     free((*result)->token);
     (*result)->token = malloc(sizeof(strlen(res) + 1));
     strcpy((*result)->token, res);
+    return SUCCESS;
 }
 
-void log_func(stack **result)
+int log_func(stack **result)
 {
     char res[255];
+    if (!(*result) || !(*result)->token)
+        return FAILURE;
     if (strchr((*result)->token, ','))
         sprintf(res, "%lf", log10(atof((*result)->token)));
     else if (strchr((*result)->token, '.'))
@@ -221,69 +265,71 @@ void log_func(stack **result)
     free((*result)->token);
     (*result)->token = malloc(sizeof(strlen(res) + 1));
     strcpy((*result)->token, res);
+    return SUCCESS;
 }
 
-void count_function(rpn **rpn_ready, stack **result)
+int count_function(rpn **rpn_ready, stack **result)
 {
+    int flag = SUCCESS;
     if (strcmp((*rpn_ready)->token, "+") == 0)
     {
-        sum(result);
+        flag = sum(result);
     }
     else if (strcmp((*rpn_ready)->token, "/") == 0)
     {
-        division(result);
+        flag = division(result);
     }
     else if (strcmp((*rpn_ready)->token, "*") == 0)
     {
-        multiplication(result);
+        flag = multiplication(result);
     }
     else if (strcmp((*rpn_ready)->token, "-") == 0)
     {
-        difference(result);
+        flag = difference(result);
     }
     else if (strcmp((*rpn_ready)->token, "%") == 0)
     {
-        mod(result);
+        flag = mod(result);
     }
     else if (strcmp((*rpn_ready)->token, "^") == 0)
     {
-        power(result);
+        flag = power(result);
     }
     else if (strcmp((*rpn_ready)->token, "sin") == 0)
     {
-        sinus(result);
+        flag = sinus(result);
     }
     else if (strcmp((*rpn_ready)->token, "cos") == 0)
     {
-        cosinus(result);
+        flag = cosinus(result);
     }
     else if (strcmp((*rpn_ready)->token, "tan") == 0)
     {
-        tangent(result);
+        flag = tangent(result);
     }
     else if (strcmp((*rpn_ready)->token, "atan") == 0)
     {
-        atangent(result);
+        flag = atangent(result);
     }
     else if (strcmp((*rpn_ready)->token, "acos") == 0)
     {
-        acosinus(result);
+        flag = acosinus(result);
     }
     else if (strcmp((*rpn_ready)->token, "asin") == 0)
     {
-        asinus(result);
+        flag = asinus(result);
     }
     else if (strcmp((*rpn_ready)->token, "sqrt") == 0)
     {
-        square(result);
+        flag = square(result);
     }
     else if (strcmp((*rpn_ready)->token, "ln") == 0)
     {
-        ln_func(result);
+        flag = ln_func(result);
     }
     else if (strcmp((*rpn_ready)->token, "log") == 0)
     {
-        log_func(result);
+        flag = log_func(result);
     }
     if (strchr((*result)->token, ',') || strchr((*result)->token, '.'))
     {
@@ -304,19 +350,20 @@ void count_function(rpn **rpn_ready, stack **result)
             free(copy);
         }
     }
+    return flag;
 }
 
-int several_dots(char *str)
+int count_chars(char *str, char c)
 {
     int i = 0;
     int count = 0;
     while (str[i])
     {
-        if (str[i] == '.' || str[i] == ',')
+        if (str[i] == c)
             count++;
         i++;
     }
-    return (count > 1);
+    return count;
 }
 
 int calculate(rpn **rpn_ready, stack **result)
@@ -324,7 +371,7 @@ int calculate(rpn **rpn_ready, stack **result)
     int flag = SUCCESS;
     while (*rpn_ready)
     {
-        if (*rpn_ready && (*rpn_ready)->token && several_dots((*rpn_ready)->token))
+        if (*rpn_ready && (*rpn_ready)->token && count_chars((*rpn_ready)->token, ',') > 1 && count_chars((*rpn_ready)->token, '.') > 1)
         {    
             flag = FAILURE;
             break;
@@ -338,7 +385,9 @@ int calculate(rpn **rpn_ready, stack **result)
         }
         else if (isdelim((*rpn_ready)->token[0]) || isfunc((*rpn_ready)->token))
         {
-            count_function(rpn_ready, result);
+            flag = count_function(rpn_ready, result);
+            if (flag == FAILURE)
+                break;
         }
         else
         {
@@ -380,8 +429,6 @@ int unaries(char *input, char *dest)
             copy[j] = ')';
             j++;
         }
-        // if ((strlen(prev_token) == 0 || isdelim(prev_token[0])) && isdelim(token[0]))
-        //     flag = FAILURE;
         else
         {
             strcpy(copy + j, token);
@@ -399,6 +446,8 @@ int scan_rpn(char *inp, char *result)
     if (strlen(inp) == 0)
         flag = FAILURE;
     else if (!result)
+        flag = FAILURE;
+    else if (count_chars(inp, '(') != count_chars(inp, ')'))
         flag = FAILURE;
     else 
     {
@@ -425,8 +474,8 @@ int scan_rpn(char *inp, char *result)
 
 // int main()
 // {
-//    char input[] = "9^4 - 78 / 5";
-//    char result_s21[255];
-//    printf("%d\n", scan_rpn(input, result_s21));
-//    printf("%s\n", result_s21);
+//     char input[] = "4+(2 + 3) /3)";
+//     char result_s21[255] = "";
+//     printf("%d\n", scan_rpn(input, result_s21));
+//     printf("%s\n", result_s21);
 // }

@@ -78,8 +78,11 @@ int put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims, char 
             //close brace
             if (strcmp(token, ")") == 0)
             {
-                while ((*stack_for_delims)->token && strcmp((*stack_for_delims)->token, "(") != 0)
+                if (!(*rpn_output) || !(*stack_for_delims))
+                    return FAILURE;
+                while ((*stack_for_delims) && (*stack_for_delims)->token && strcmp((*stack_for_delims)->token, "(") != 0)
                 {
+                    printf("%s\n", (*stack_for_delims)->token);
                     rpn *new = malloc(sizeof(rpn));
                     new->token = malloc(sizeof(token + 1));
                     new->next = NULL;
@@ -91,9 +94,13 @@ int put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims, char 
                     (*stack_for_delims) = (*stack_for_delims)->prev;
                     free(temp);
                 }
-                stack *temp = (*stack_for_delims);
-                (*stack_for_delims) = (*stack_for_delims)->prev;
-                free(temp);
+                if (*stack_for_delims)
+                {
+                    stack *temp = (*stack_for_delims);
+                    (*stack_for_delims) = (*stack_for_delims)->prev;
+                    free(temp);
+                }
+                
             }
             else {
                 if (get_operator_priority((*stack_for_delims)->token) == -1 || get_operator_priority(token) == -1)
@@ -149,28 +156,39 @@ int put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims, char 
 
 int dijkstra(char *input, rpn **rpn_head)
 {
+    int flag = SUCCESS;
     int i = 0;
     char token[50];
     rpn *rpn_output = NULL;
     stack *stack_for_delims = NULL;
-    while (input[i])
+    if (!input)
+        flag = FAILURE;
+    else
     {
-        get_token(token, input + i, &i);
-        if (put_in_rpn(&rpn_output, rpn_head, &stack_for_delims, token) == FAILURE)
+        while (input[i])
+        {
+            get_token(token, input + i, &i);
+            if (put_in_rpn(&rpn_output, rpn_head, &stack_for_delims, token) == FAILURE)
+                return FAILURE;
+        }
+        if (!rpn_output)
             return FAILURE;
+        while (stack_for_delims)
+        {
+            rpn *new = malloc(sizeof(rpn));
+            new->token = malloc(sizeof(token) + 1);
+            if (!new || !new->token)
+                flag = FAILURE;
+            else
+            {
+                new->next = NULL;
+                strcpy(new->token, stack_for_delims->token);
+                new->token[strlen(new->token)] = '\0';
+                rpn_output->next = new;
+                rpn_output = new;
+            }
+            stack_for_delims = stack_for_delims->prev;
+        }
     }
-    while (stack_for_delims)
-    {
-        rpn *new = malloc(sizeof(rpn));
-        new->token = malloc(sizeof(token) + 1);
-        new->next = NULL;
-        strcpy(new->token, stack_for_delims->token);
-        new->token[strlen(new->token)] = '\0';
-        rpn_output->next = new;
-        rpn_output = new;
-        stack *temp = stack_for_delims;
-        stack_for_delims = stack_for_delims->prev;
-        free(temp);
-    }
-    return SUCCESS;
+    return flag;
 }
