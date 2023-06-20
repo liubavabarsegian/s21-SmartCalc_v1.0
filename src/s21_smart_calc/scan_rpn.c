@@ -363,10 +363,13 @@ int calculate(rpn **rpn_ready, stack **result) {
 
 int unaries(char *input, char *dest) {
   int flag = SUCCESS;
-  char token[255], prev_token[255] = "", copy[255] = "";
-  int i = 0, j = 0;
+  char token[255] = "", prev_token[255] = "", copy[255] = "";
+  int i = 0, j = 0, prev_i;
   while (input[i]) {
+    prev_i = i;
     get_token(token, input + i, &i);
+    if (prev_i == i)
+        break;
     if ((strlen(prev_token) == 0 ||
          (isdelim(prev_token[0]) && strcmp(prev_token, ")"))) &&
         (strcmp(token, "+") == 0 || strcmp(token, "-") == 0)) {
@@ -443,9 +446,9 @@ int scan_rpn(char *inp, char *result) {
 
 // int main()
 // {
-//     char input[] = "sin(5.89*67)-cos(4.99)-log(45.78)";
+//     char input[] = ".";
 //     char result_s21[255] = "";
-//     // scan_rpn(input, result_s21);
+//     scan_rpn(input, result_s21);
 //     printf("%d\n", scan_rpn(input, result_s21));
 //     printf("%s\n", result_s21);
 // }

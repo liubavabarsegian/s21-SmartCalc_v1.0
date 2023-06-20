@@ -337,6 +337,22 @@ START_TEST(test_38) {  // error
 }
 END_TEST
 
+START_TEST(test_39) {  // error
+  char input[] = ".";
+  char result_s21[255];
+  int s21_flag = scan_rpn(input, result_s21);
+  ck_assert_int_eq(s21_flag, FAILURE);
+}
+END_TEST
+
+START_TEST(test_40) {  // error
+  char input[] = "!";
+  char result_s21[255];
+  int s21_flag = scan_rpn(input, result_s21);
+  ck_assert_int_eq(s21_flag, FAILURE);
+}
+END_TEST
+
 void calc_tests(TCase *tc1_1) {
   tcase_add_test(tc1_1, test_1);
   tcase_add_test(tc1_1, test_2);
@@ -376,6 +392,8 @@ void calc_tests(TCase *tc1_1) {
   tcase_add_test(tc1_1, test_36);
   tcase_add_test(tc1_1, test_37);
   tcase_add_test(tc1_1, test_38);
+  tcase_add_test(tc1_1, test_39);
+  tcase_add_test(tc1_1, test_40);
 }
 
 int main(void) {

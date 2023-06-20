@@ -50,9 +50,8 @@ install:
 	make clean
 	rm -rf build
 	mkdir build
-	make
+	make ${NAME}
 	cd s21_smart_calc && qmake && make && make clean && rm Makefile && cd ../ && mv s21_smart_calc/s21_smart_calc build
-	
 uninstall:
 	rm -rf build
 

@@ -57,7 +57,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::append(QString text)
 {
-    ui->textEdit->setText(ui->textEdit->toPlainText()+ text);
+    if ((text == "+" || text == "-") && (ui->textEdit->toPlainText().endsWith("+") || ui->textEdit->toPlainText().endsWith("-")))
+    {
+//         if (ui->textEdit->toPlainText().length() > 0)
+             clicked_backspace();
+         ui->textEdit->setText(ui->textEdit->toPlainText() + text);
+    }
+    else
+        ui->textEdit->setText(ui->textEdit->toPlainText()+ text);
 }
 
 void MainWindow::clicked_backspace()
@@ -70,25 +77,53 @@ void MainWindow::equal()
     QString input = ui->textEdit->toPlainText();
     if (input.contains("x"))
     {
-        if (ui->inputX->text() == "")
-            ui->inputX->text() == "0";
-        input.replace("x", ui->inputX->text());
-        input.replace(".", ",");
-        char result[255];
-        int flag = scan_rpn((char *)input.toStdString().c_str(), result);
-        if (flag == SUCCESS)
-            ui->textEdit->setText(QString(result).replace(",", "."));
-        else
-            ui->textEdit->setText("Incorrect input!");
+        int i = 0;
+        while(ui->inputX->text().toStdString().c_str()[i])
+        {
+            if (ui->inputX->text().toStdString().c_str()[i] != ',' ||
+                    ui->inputX->text().toStdString().c_str()[i] != '.' ||
+                    ui->inputX->text().toStdString().c_str()[i] <= '0' ||
+                    ui->inputX->text().toStdString().c_str()[i] >= '9')
+                ui->inputX->setText("Incorrect!");
+            break;
+        }
+        if (ui->inputX->text() != "Incorrect!")
+        {
+            if (ui->inputX->text() == "")
+                ui->inputX->text() == "0";
+            input.replace("x", ui->inputX->text());
+            input.replace(".", ",");
+            if (input.length() > 255)
+            {
+                ui->textEdit->setText("The input is too long! Input no more than 255 symbols");
+            }
+            else
+
+            {
+                char result[255];
+                int flag = scan_rpn((char *)input.toStdString().c_str(), result);
+                if (flag == SUCCESS)
+                    ui->textEdit->setText(QString(result).replace(",", "."));
+                else
+                    ui->textEdit->setText("Incorrect input!");
+            }
+        }
     }
     else {
-        char result[255];
-        input.replace(".", ",");
-        int flag = scan_rpn((char *)input.toStdString().c_str(), result);
-        if (flag == SUCCESS)
-            ui->textEdit->setText(QString(result).replace(",", "."));
+        if (input.length() > 255)
+        {
+            ui->textEdit->setText("The input is too long! Input no more than 255 symbols");
+        }
         else
-            ui->textEdit->setText("Incorrect input!");
+        {
+            char result[255];
+            input.replace(".", ",");
+            int flag = scan_rpn((char *)input.toStdString().c_str(), result);
+            if (flag == SUCCESS)
+                ui->textEdit->setText(QString(result).replace(",", "."));
+            else
+                ui->textEdit->setText("Incorrect input!");
+        }
     }
 }
 
@@ -119,28 +154,34 @@ void MainWindow::show_graphic()
         temp = formula;
         formula.replace("x", QString::number(x1));
         formula.replace(".", ",");
-        char result[255];
-        int flag = scan_rpn((char *)formula.toStdString().c_str(), result);
-        if (flag == SUCCESS)
+        if (formula.length() > 255)
         {
-            ui->textEdit->setText(QString(result).replace(",", "."));
-            Y.push_back(atof(result));
-            formula = temp;
+            ui->textEdit->setText("The input is too long! Input no more than 255 symbols");
+            break;
         }
         else
         {
-            ui->textEdit->setText("Incorrect input!");
-            break;
+            char result[255];
+            int flag = scan_rpn((char *)formula.toStdString().c_str(), result);
+            if (flag == SUCCESS)
+            {
+                Y.push_back(atof(result));
+                formula = temp;
+                ui->customPlot->graph(0)->addData(X,Y);
+                ui->customPlot->xAxis->setRange(-5, 5);
+                ui->customPlot->yAxis->setRange(-10, 10);
+                ui->customPlot->replot();
+            }
+            else
+            {
+                ui->textEdit->setText("Incorrect input!");
+                break;
+            }
         }
     }
-    ui->customPlot->graph(0)->addData(X,Y);
-    ui->customPlot->replot();
-    ui->customPlot->xAxis->setRange(-5, 5);
-    ui->customPlot->yAxis->setRange(-10, 10);
+
     X.clear();
     Y.clear();
-    ui->customPlot->replot();
-
 }
 
 void MainWindow::clear()
