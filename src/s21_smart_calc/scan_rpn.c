@@ -371,7 +371,7 @@ int calculate(rpn **rpn_ready, stack **result)
     int flag = SUCCESS;
     while (*rpn_ready)
     {
-        if (*rpn_ready && (*rpn_ready)->token && count_chars((*rpn_ready)->token, ',') > 1 && count_chars((*rpn_ready)->token, '.') > 1)
+        if (*rpn_ready && (*rpn_ready)->token && (count_chars((*rpn_ready)->token, ',') > 1 || count_chars((*rpn_ready)->token, '.') > 1))
         {    
             flag = FAILURE;
             break;
@@ -417,17 +417,46 @@ int unaries(char *input, char *dest)
     while (input[i])
     {
         get_token(token, input + i, &i);
-        if ((strlen(prev_token) == 0 || isdelim(prev_token[0])) && (strcmp(token, "+") == 0 || strcmp(token, "-") == 0))
+        if ((strlen(prev_token) == 0 || (isdelim(prev_token[0]) && strcmp(prev_token, ")"))) && (strcmp(token, "+") == 0 || strcmp(token, "-") == 0))
         {
-            copy[j] = '(';
-            copy[j + 1] = '0';
-            copy[j + 2] = token[0];
-            get_token(token, input + i, &i);
-            j += 3;
-            strcpy(copy + j, token);
-            j += strlen(token);
-            copy[j] = ')';
-            j++;
+            if (strcmp(prev_token, "+") == 0 && (strcmp(token, "+") == 0))
+                return FAILURE;
+            else if (strcmp(prev_token, "+") == 0 && strcmp(token, "-") == 0)
+                return FAILURE;
+            else if (strcmp(prev_token, "-") == 0 && strcmp(token, "+") == 0)
+                return FAILURE;
+            else if (strcmp(prev_token, "-") == 0 && strcmp(token, "-") == 0)
+                return FAILURE;
+            else
+            {
+                // if (prev_token[0] == ')')
+                // {
+                //     copy[j] = '*';
+                //     j++;
+                // }
+                copy[j] = '(';
+                copy[j + 1] = '0';
+                copy[j + 2] = token[0];
+                get_token(token, input + i, &i);
+                if (isfunc(token))
+                {
+                    // copy[j + 2] = '-';
+                    copy[j + 3] = '1';
+                    copy[j + 4] = ')';
+                    copy[j + 5] = '*';
+                    j += 6;
+                    strcpy(copy + j, token);
+                    j += strlen(token);
+                }
+                else
+                {
+                    j += 3;
+                    strcpy(copy + j, token);
+                    j += strlen(token);
+                    copy[j] = ')';
+                    j++;
+                }
+            }
         }
         else
         {
@@ -474,8 +503,9 @@ int scan_rpn(char *inp, char *result)
 
 // int main()
 // {
-//     char input[] = "4+(2 + 3) /3)";
+//     char input[] = "sin(5.89*67)-cos(4.99)-log(45.78)";
 //     char result_s21[255] = "";
+//     // scan_rpn(input, result_s21);
 //     printf("%d\n", scan_rpn(input, result_s21));
 //     printf("%s\n", result_s21);
 // }

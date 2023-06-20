@@ -2,7 +2,7 @@
 
 int isfunc(char *str)
 {
-    if (strcmp(str, "sin") == 0 || strcmp(str, "cos") == 0 || strcmp(str, "tan") == 0 || strcmp(str, "asin") == 0 || strcmp(str, "acos") == 0 || strcmp(str, "atan") == 0 || strcmp(str, "sqrt") == 0)
+    if (strcmp(str, "sin") == 0 || strcmp(str, "cos") == 0 || strcmp(str, "tan") == 0 || strcmp(str, "asin") == 0 || strcmp(str, "acos") == 0 || strcmp(str, "atan") == 0 || strcmp(str, "sqrt") == 0 || strcmp(str, "log") == 0 || strcmp(str, "ln") == 0)
         return 1;
     return 0;
 }
@@ -82,7 +82,6 @@ int put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims, char 
                     return FAILURE;
                 while ((*stack_for_delims) && (*stack_for_delims)->token && strcmp((*stack_for_delims)->token, "(") != 0)
                 {
-                    printf("%s\n", (*stack_for_delims)->token);
                     rpn *new = malloc(sizeof(rpn));
                     new->token = malloc(sizeof(token + 1));
                     new->next = NULL;

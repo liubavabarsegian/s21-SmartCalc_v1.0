@@ -23,7 +23,7 @@ ifeq ($(shell uname), Linux)
 	TEST_FLAGS += -lrt -lsubunit
 endif
 
-all: ${NAME}
+all: clean_all test install
 
 ${NAME}:
 	$(CC) $(CFLAGS) -c ${SRCS}
@@ -36,16 +36,15 @@ test: rebuild
 	$(CC) $(CFLAGS) *.o ${NAME} ${TEST_FLAGS}  -o test
 	./test
 
-add_coverage_flag:
-	$(eval FLAGS += --coverage)
-
 gcov_report: 
-	clean add_coverage_flag test
-	lcov --capture --directory . --output-file coverage.info
-	rm *tests*.gcda *tests*.gcno
-	gcov -b -l -p -c *.gcno
-	gcovr -o gcov_report.html --html --html-details
-	open gcov_report.html
+	make clean
+	$(CC) $(CFLAGS) -c ${TEST_SRCS}
+	$(CC)  $(CFLAGS) $(GCOV_FLAGS) -c ${SRCS}
+	$(CC)  $(CFLAGS) $(GCOV_FLAGS) *.o $(TEST_FLAGS) -o test
+	./test
+	lcov -t "test" -o test.info -c -d .
+	genhtml -o report test.info
+	open report/index.html
 
 install: 
 	make clean
@@ -72,7 +71,7 @@ dist:
 	rm -rf Archive_SmartCalc_v1.0/
 
 
-rebuild: clean all
+rebuild: clean ${NAME}
 
 clean:
 	rm -rf test *.gcov *.css gcov*.html
@@ -83,3 +82,9 @@ clean:
 clean_all: 
 	make clean
 	rm -rf build
+
+style: 
+	clang-format --style=google *.c *.h tests/*.c -n
+
+correct_style: 
+	clang-format --style=google *.c *.h tests/*.c -i

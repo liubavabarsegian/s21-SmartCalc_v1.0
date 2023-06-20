@@ -174,7 +174,7 @@ START_TEST(test_20) {
     double result_real = sin(5.89*67) - cos(4.99) - log10(45.78);
     char result_s21[255];
     scan_rpn(input, result_s21);
-    ck_assert_float_eq(atof(result_s21), result_real);
+    ck_assert_float_eq_tol(atof(result_s21), result_real, 1e-6);
 }
 END_TEST
 
@@ -255,6 +255,84 @@ START_TEST(test_29) {
 }
 END_TEST
 
+START_TEST(test_30) { //error
+    char input[] ="+-5+6";  
+    char result_s21[255];
+    int s21_flag = scan_rpn(input, result_s21);
+    ck_assert_int_eq(s21_flag, FAILURE);
+}
+END_TEST
+
+START_TEST(test_31) { //error
+    char input[] ="(56+67";  
+    char result_s21[255];
+    int s21_flag = scan_rpn(input, result_s21);
+    ck_assert_int_eq(s21_flag, FAILURE);
+}
+END_TEST
+
+START_TEST(test_32) { //error
+    char input[] ="-8)";  
+    char result_s21[255];
+    int s21_flag = scan_rpn(input, result_s21);
+    ck_assert_int_eq(s21_flag, FAILURE);
+}
+END_TEST
+
+START_TEST(test_33) { 
+    char input[] ="tan(atan(0.5)) + acos(0.05 - 0.003) - cos(3^(2)) - ln(107-cos(sin(3.14)))";  
+    double result_real =tan(atan(0.5)) + acos(0.05 - 0.003) - cos(pow(3, 2))- log(107-cos(sin(3.14)));
+    char result_s21[255];
+    scan_rpn(input, result_s21);
+    ck_assert_float_eq_tol(atof(result_s21), result_real, 1e-6);
+}
+END_TEST
+
+START_TEST(test_34) { 
+    char input[] ="-ln(200)";  
+    double result_real =-log(200);
+    char result_s21[255];
+    scan_rpn(input, result_s21);
+    ck_assert_float_eq_tol(atof(result_s21), result_real, 1e-6);
+}
+END_TEST
+
+START_TEST(test_35) { 
+    char input[] ="2^0.5 - 2^20";  
+    double result_real = pow(2, 0.5) - pow(2, 20);
+    char result_s21[255];
+    scan_rpn(input, result_s21);
+    ck_assert_float_eq_tol(atof(result_s21), result_real, 1e-6);
+}
+END_TEST
+
+START_TEST(test_36) { 
+    char input[] ="sin(500) + cos(-200) - tan(15) - atan(0.33) + acos(-1) * asin(1) + ln(sqrt(144))";  
+    double result_real =sin(500) + cos(-200) - tan(15) - atan(0.33) + acos(-1) * asin(1) + log(sqrt(144));
+    char result_s21[255];
+    scan_rpn(input, result_s21);
+    ck_assert_float_eq_tol(atof(result_s21), result_real, 1e-6);
+}
+END_TEST
+
+
+START_TEST(test_37) { //error
+    char input[] ="-8)";  
+    char *result_s21 = NULL;
+    int s21_flag = scan_rpn(input, result_s21);
+    ck_assert_int_eq(s21_flag, FAILURE);
+}
+END_TEST
+
+
+START_TEST(test_38) { //error
+    char input[] ="";  
+    char result_s21[255];
+    int s21_flag = scan_rpn(input, result_s21);
+    ck_assert_int_eq(s21_flag, FAILURE);
+}
+END_TEST
+
 void calc_tests(TCase *tc1_1) {
     tcase_add_test(tc1_1, test_1);
     tcase_add_test(tc1_1, test_2);
@@ -285,6 +363,15 @@ void calc_tests(TCase *tc1_1) {
     tcase_add_test(tc1_1, test_27);
     tcase_add_test(tc1_1, test_28);
     tcase_add_test(tc1_1, test_29);
+    tcase_add_test(tc1_1, test_30);
+    tcase_add_test(tc1_1, test_31);
+    tcase_add_test(tc1_1, test_32);
+    tcase_add_test(tc1_1, test_33);
+    tcase_add_test(tc1_1, test_34);
+    tcase_add_test(tc1_1, test_35);
+    tcase_add_test(tc1_1, test_36);
+    tcase_add_test(tc1_1, test_37);
+    tcase_add_test(tc1_1, test_38);
 }
 
 int main(void) {

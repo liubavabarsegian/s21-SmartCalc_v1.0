@@ -9,6 +9,7 @@
 
 #define SUCCESS 0
 #define FAILURE 1
+
 typedef struct stack {
     char *token;
     struct stack *prev;
