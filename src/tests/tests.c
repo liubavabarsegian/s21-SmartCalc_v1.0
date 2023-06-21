@@ -353,6 +353,15 @@ START_TEST(test_40) {  // error
 }
 END_TEST
 
+START_TEST(test_41) {
+  char input[] = "log(-10)";
+  char result_s21[255];
+  int s21_flag = scan_rpn(input, result_s21);
+  ck_assert_float_nan(atof(result_s21));
+  ck_assert_int_eq(s21_flag, SUCCESS);
+}
+END_TEST
+
 void calc_tests(TCase *tc1_1) {
   tcase_add_test(tc1_1, test_1);
   tcase_add_test(tc1_1, test_2);
@@ -394,6 +403,7 @@ void calc_tests(TCase *tc1_1) {
   tcase_add_test(tc1_1, test_38);
   tcase_add_test(tc1_1, test_39);
   tcase_add_test(tc1_1, test_40);
+  tcase_add_test(tc1_1, test_41);
 }
 
 int main(void) {

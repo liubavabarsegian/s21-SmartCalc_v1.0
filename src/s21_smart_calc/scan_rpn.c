@@ -313,6 +313,19 @@ int count_function(rpn **rpn_ready, stack **result) {
       i -= 1;
       free(copy);
     }
+    i = strlen((*result)->token) - 1;
+    if ((*result)->token[i] == '.' || (*result)->token[i] == ',') {
+      char *copy;
+      copy = malloc(i);
+      strncpy(copy, (*result)->token, i);
+      free((*result)->token);
+      (*result)->token = malloc(i);
+      if ((*result)->token) {
+        strncpy((*result)->token, copy, i);
+        (*result)->token[i] = '\0';
+      }
+      free(copy);
+    }
   }
   return flag;
 }
@@ -368,8 +381,7 @@ int unaries(char *input, char *dest) {
   while (input[i]) {
     prev_i = i;
     get_token(token, input + i, &i);
-    if (prev_i == i)
-        break;
+    if (prev_i == i) break;
     if ((strlen(prev_token) == 0 ||
          (isdelim(prev_token[0]) && strcmp(prev_token, ")"))) &&
         (strcmp(token, "+") == 0 || strcmp(token, "-") == 0)) {
@@ -443,12 +455,3 @@ int scan_rpn(char *inp, char *result) {
   }
   return flag;
 }
-
-// int main()
-// {
-//     char input[] = ".";
-//     char result_s21[255] = "";
-//     scan_rpn(input, result_s21);
-//     printf("%d\n", scan_rpn(input, result_s21));
-//     printf("%s\n", result_s21);
-// }

@@ -83,7 +83,7 @@ clean_all:
 	rm -rf build
 
 style: 
-	clang-format --style=google ${SRCS} ${SOURCE_DIR}/*.h ${TEST_SRCS} -n
+	clang-format --style=google ${SRCS}  ${SOURCE_DIR}/*.cpp ${SOURCE_DIR}/*.h ${TEST_SRCS} -n
 
 correct_style: 
-	clang-format --style=google ${SRCS} ${SOURCE_DIR}/*.h ${TEST_SRCS} -i
+	clang-format --style=google ${SRCS} ${SOURCE_DIR}/*.cpp ${SOURCE_DIR}/*.h ${TEST_SRCS} -i
