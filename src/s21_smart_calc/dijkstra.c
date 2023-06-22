@@ -63,7 +63,7 @@ int put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims,
   if (isdelim(token[0]) || isfunc(token)) {
     if ((*stack_for_delims) == NULL) {
       (*stack_for_delims) = malloc(sizeof(stack));
-      (*stack_for_delims)->token = malloc(sizeof(token + 1));
+      (*stack_for_delims)->token = malloc(strlen(token) + 1);
       strcpy((*stack_for_delims)->token, token);
       (*stack_for_delims)->prev = NULL;
     } else {
@@ -71,9 +71,9 @@ int put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims,
       if (strcmp(token, ")") == 0) {
         if (!(*rpn_output) || !(*stack_for_delims)) return FAILURE;
         while ((*stack_for_delims) && (*stack_for_delims)->token &&
-               strcmp((*stack_for_delims)->token, "(") != 0) {
+               strcmp((*stack_for_delims)->token, "(") != 0) {     
           rpn *new = malloc(sizeof(rpn));
-          new->token = malloc(sizeof(token + 1));
+          new->token = malloc(strlen(token) + 1);
           new->next = NULL;
           strcpy(new->token, (*stack_for_delims)->token);
           new->token[strlen(new->token)] = '\0';
@@ -81,11 +81,13 @@ int put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims,
           (*rpn_output) = new;
           stack *temp = (*stack_for_delims);
           (*stack_for_delims) = (*stack_for_delims)->prev;
+          free(temp->token);
           free(temp);
         }
         if (*stack_for_delims) {
           stack *temp = (*stack_for_delims);
           (*stack_for_delims) = (*stack_for_delims)->prev;
+          free(temp->token);
           free(temp);
         }
 
@@ -99,7 +101,7 @@ int put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims,
                get_operator_priority((*stack_for_delims)->token) >=
                    get_operator_priority(token)) {
           rpn *new = malloc(sizeof(rpn));
-          new->token = malloc(sizeof(token + 1));
+          new->token = malloc(strlen(token) + 1);
           new->next = NULL;
           strcpy(new->token, (*stack_for_delims)->token);
           new->token[strlen(new->token)] = '\0';
@@ -107,10 +109,11 @@ int put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims,
           (*rpn_output) = new;
           stack *temp = (*stack_for_delims);
           (*stack_for_delims) = (*stack_for_delims)->prev;
+          free(temp->token);
           free(temp);
         }
         stack *new = malloc(sizeof(stack));
-        new->token = malloc(sizeof(token + 1));
+        new->token = malloc(strlen(token) + 1);
         strcpy(new->token, token);
         new->token[strlen(new->token)] = '\0';
         new->prev = (*stack_for_delims);
@@ -120,13 +123,13 @@ int put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims,
   } else {
     if ((*rpn_output) == NULL) {
       (*rpn_output) = malloc(sizeof(rpn));
-      (*rpn_output)->token = malloc(sizeof(token + 1));
+      (*rpn_output)->token = malloc(strlen(token) + 1);
       strcpy((*rpn_output)->token, token);
       (*rpn_output)->next = NULL;
       (*rpn_head) = (*rpn_output);
     } else {
       rpn *new = malloc(sizeof(rpn));
-      new->token = malloc(sizeof(token + 1));
+      new->token = malloc(strlen(token) + 1);
       new->next = NULL;
       strcpy(new->token, token);
       new->token[strlen(new->token)] = '\0';
@@ -140,7 +143,7 @@ int put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims,
 int dijkstra(char *input, rpn **rpn_head) {
   int flag = SUCCESS;
   int i = 0;
-  char token[50];
+  char token[255];
   rpn *rpn_output = NULL;
   stack *stack_for_delims = NULL;
   if (!input)
@@ -155,7 +158,7 @@ int dijkstra(char *input, rpn **rpn_head) {
     if (!rpn_output) return FAILURE;
     while (stack_for_delims) {
       rpn *new = malloc(sizeof(rpn));
-      new->token = malloc(sizeof(token) + 1);
+      new->token = malloc(strlen(token) + 1);
       if (!new || !new->token)
         flag = FAILURE;
       else {
@@ -165,7 +168,10 @@ int dijkstra(char *input, rpn **rpn_head) {
         rpn_output->next = new;
         rpn_output = new;
       }
+      stack *temp = stack_for_delims;
       stack_for_delims = stack_for_delims->prev;
+      free(temp->token);
+      free(temp);      
     }
   }
   return flag;
