@@ -362,6 +362,15 @@ START_TEST(test_41) {
 }
 END_TEST
 
+START_TEST(test_42) {
+  char input[] = "sin(1)";
+  double result_real = sin(1);
+  char result_s21[255];
+  scan_rpn(input, result_s21);
+  ck_assert_float_eq_tol(atof(result_s21), result_real, 1e-6);
+}
+END_TEST
+
 void calc_tests(TCase *tc1_1) {
   tcase_add_test(tc1_1, test_1);
   tcase_add_test(tc1_1, test_2);
@@ -404,6 +413,7 @@ void calc_tests(TCase *tc1_1) {
   tcase_add_test(tc1_1, test_39);
   tcase_add_test(tc1_1, test_40);
   tcase_add_test(tc1_1, test_41);
+  tcase_add_test(tc1_1, test_42);
 }
 
 int main(void) {

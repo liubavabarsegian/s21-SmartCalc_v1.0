@@ -109,8 +109,11 @@ void MainWindow::equal() {
           ui->inputX->text().toStdString().c_str()[i] != '+' &&
           (ui->inputX->text().toStdString().c_str()[i] <= '0' ||
            ui->inputX->text().toStdString().c_str()[i] >= '9'))
-        ui->inputX->setText("Incorrect!");
-      break;
+        {
+                ui->inputX->setText("Incorrect!");
+                break;
+        }
+      i++;
     }
     if (ui->inputX->text() != "Incorrect!") {
       if (ui->inputX->text() == "") ui->inputX->text() == "0";
@@ -122,7 +125,7 @@ void MainWindow::equal() {
       } else
 
       {
-        char result[255];
+        char result[255] = "";
         int flag = scan_rpn((char *)input.toStdString().c_str(), result);
         if (flag == SUCCESS)
           ui->textEdit->setText(QString(result).replace(",", "."));
@@ -135,7 +138,7 @@ void MainWindow::equal() {
       ui->textEdit->setText(
           "The input is too long! Input no more than 255 symbols");
     } else {
-      char result[255];
+      char result[255] = "";
       input.replace(".", ",");
       int flag = scan_rpn((char *)input.toStdString().c_str(), result);
       if (flag == SUCCESS)
@@ -177,10 +180,10 @@ void MainWindow::show_graphic() {
           "The input is too long! Input no more than 255 symbols");
       break;
     } else {
-      char result[255];
+      char result[255] = "";
       int flag = scan_rpn((char *)formula.toStdString().c_str(), result);
       if (flag == SUCCESS) {
-        if (result == "nan") continue;
+        if (strcmp(result, "nan") == 0 || strcmp(result, "-nan") == 0) continue;
         Y.push_back(atof(result));
         formula = temp;
         ui->customPlot->graph(0)->addData(X, Y);
