@@ -6,7 +6,7 @@
 #include "../s21_smart_calc/scan_rpn.h"
 
 START_TEST(test_1) {
-  char input[] = "100  +  100";
+  char input[] = "100 + 100";
   double result_real = 100 + 100;
   char result_s21[255];
   scan_rpn(input, result_s21);
@@ -363,8 +363,8 @@ START_TEST(test_41) {
 END_TEST
 
 START_TEST(test_42) {
-  char input[] = "sin(1)";
-  double result_real = sin(1);
+  char input[] = "asin(1)";
+  double result_real = asin(1);
   char result_s21[255];
   scan_rpn(input, result_s21);
   ck_assert_float_eq_tol(atof(result_s21), result_real, 1e-6);

@@ -155,10 +155,10 @@ int dijkstra(char *input, rpn **rpn_head) {
           FAILURE)
         return FAILURE;
     }
-    if (!rpn_output) return FAILURE;
+    if (!rpn_head) return FAILURE;
     while (stack_for_delims) {
       rpn *new = malloc(sizeof(rpn));
-      new->token = malloc(strlen(token) + 1);
+      new->token = malloc(strlen(stack_for_delims->token) + 1);
       if (!new || !new->token)
         flag = FAILURE;
       else {
@@ -176,3 +176,19 @@ int dijkstra(char *input, rpn **rpn_head) {
   }
   return flag;
 }
+
+// int main()
+// {
+//   rpn *head = NULL;
+//   dijkstra("tan(atan(0.5))", &head);
+  
+//   while(head)
+//   {
+//     // printf("?");
+//     // printf("%s->", head->token);
+//     rpn *copy = head;
+//     head = head->next;
+//     free(copy->token);
+//     free(copy);
+//   }
+// }

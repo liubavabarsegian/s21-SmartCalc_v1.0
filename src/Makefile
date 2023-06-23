@@ -51,7 +51,7 @@ install:
 	rm -rf build
 	mkdir build
 	make ${NAME}
-	cd s21_smart_calc && qmake && make && make clean && rm Makefile && cd ../ && mv s21_smart_calc/s21_smart_calc build
+	cd s21_smart_calc && qmake ../s21_smart_calc/s21_smart_calc.pro && make && make clean && rm Makefile && cd ../ && mv s21_smart_calc/s21_smart_calc build
 uninstall:
 	rm -rf build
 
@@ -87,3 +87,12 @@ style:
 
 correct_style: 
 	clang-format --style=google ${SRCS} ${SOURCE_DIR}/*.cpp ${SOURCE_DIR}/*.h ${TEST_SRCS} -i
+
+installqt:
+	sudo apt update
+	sudo apt install qtcreator -y
+	sudo apt install qtbase5-dev qtwayland5-dev-tools qtwayland5 -y
+	sudo apt install qt5-qmake -y
+
+leaks:
+	@valgrind --tool=memcheck --leak-check=full --track-origins=yes --show-reachable=yes --num-callers=20 --track-fds=yes --log-file="vg_info.log" ./test > vg_out.log
