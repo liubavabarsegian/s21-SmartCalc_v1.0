@@ -168,10 +168,9 @@ void MainWindow::show_graphic() {
   QString temp;
   QVector<double> X, Y;
   double step = (x2 - x1) / 1000;
+  int i = 0;
   for (; x1 <= x2; x1 += step + 0.001) {
     QString s_x1 = QString::number(x1);
-
-    X.push_back(x1);
     temp = formula;
     formula.replace("x", QString::number(x1));
     formula.replace(".", ",");
@@ -183,17 +182,24 @@ void MainWindow::show_graphic() {
       char result[255] = "";
       int flag = scan_rpn((char *)formula.toStdString().c_str(), result);
       if (flag == SUCCESS) {
-        if (strcmp(result, "nan") == 0 || strcmp(result, "-nan") == 0) continue;
+        if (strcmp(result, "nan") == 0 || strcmp(result, "-nan") == 0)
+        {
+            formula = temp;
+            i++;
+            continue;
+        }
+        X.push_back(x1);
         Y.push_back(atof(result));
         formula = temp;
-        ui->customPlot->graph(0)->addData(X, Y);
-        ui->customPlot->xAxis->setRange(-5, 5);
-        ui->customPlot->yAxis->setRange(-10, 10);
+        ui->customPlot->graph(i);
+        ui->customPlot->graph(i)->addData(X, Y);
         ui->customPlot->replot();
       } else {
         ui->textEdit->setText("Incorrect input!");
         break;
       }
+      ui->customPlot->xAxis->setRange(-5, 5);
+      ui->customPlot->yAxis->setRange(-10, 10);
     }
   }
 
@@ -205,4 +211,5 @@ void MainWindow::clear() {
   ui->textEdit->setText("");
   ui->inputX->setText("");
   ui->customPlot->clearGraphs();
+  ui->customPlot->replot();
 }

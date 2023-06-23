@@ -360,6 +360,7 @@ int calculate(rpn **rpn_ready, stack **result) {
       (*result)->prev = NULL;
       strcpy((*result)->token, (*rpn_ready)->token);
     } else if (isdelim((*rpn_ready)->token[0]) || isfunc((*rpn_ready)->token)) {
+      printf("%s\n", (*rpn_ready)->token);
       flag = count_function(rpn_ready, result);
       if (flag == FAILURE) break;
     } else {
@@ -497,10 +498,10 @@ int scan_rpn(char *inp, char *result) {
   return flag;
 }
 
-int main()
-{
-  char input[] = "atan(tan(0.5))";
-  char result_s21[255] = "";
-  scan_rpn(input, result_s21);
-  // printf("%s\n", result_s21);
-}
+//int main()
+//{
+//  char input[] = "atan(tan(0.5))";
+//  char result_s21[255] = "";
+//  scan_rpn(input, result_s21);
+//  // printf("%s\n", result_s21);
+//}
