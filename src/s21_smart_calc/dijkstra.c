@@ -40,7 +40,7 @@ char *get_token(char *token, char *prog, int *i) {
     ++prog;
     ++(*i);
   }
-  if (strchr("+-~*/%^=()", *prog)) {
+  if (strchr("+-*/%^()", *prog)) {
     *temp++ = *prog++;
     ++(*i);
   } else if (isalpha(*prog)) {
@@ -71,7 +71,7 @@ int put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims,
       if (strcmp(token, ")") == 0) {
         if (!(*rpn_output) || !(*stack_for_delims)) return FAILURE;
         while ((*stack_for_delims) && (*stack_for_delims)->token &&
-               strcmp((*stack_for_delims)->token, "(") != 0) {     
+               strcmp((*stack_for_delims)->token, "(") != 0) {
           rpn *new = malloc(sizeof(rpn));
           new->token = malloc(strlen(token) + 1);
           new->next = NULL;
@@ -143,7 +143,7 @@ int put_in_rpn(rpn **rpn_output, rpn **rpn_head, stack **stack_for_delims,
 int dijkstra(char *input, rpn **rpn_head) {
   int flag = SUCCESS;
   int i = 0;
-  char token[255];
+  char token[255] = "";
   rpn *rpn_output = NULL;
   stack *stack_for_delims = NULL;
   if (!input)
@@ -151,17 +151,30 @@ int dijkstra(char *input, rpn **rpn_head) {
   else {
     while (input[i]) {
       get_token(token, input + i, &i);
-      if (put_in_rpn(&rpn_output, rpn_head, &stack_for_delims, token) ==
-          FAILURE)
+      if (strlen(token) == 0 ||
+          put_in_rpn(&rpn_output, rpn_head, &stack_for_delims, token) ==
+              FAILURE) {
+        while (stack_for_delims) {
+          stack *temp = stack_for_delims;
+          stack_for_delims = temp->prev;
+          free(temp->token);
+          free(temp);
+        }
+        while (*rpn_head) {
+          rpn *temp = *rpn_head;
+          *rpn_head = temp->next;
+          free(temp->token);
+          free(temp);
+        }
         return FAILURE;
+      }
     }
-    if (!rpn_head) return FAILURE;
     while (stack_for_delims) {
       rpn *new = malloc(sizeof(rpn));
       new->token = malloc(strlen(stack_for_delims->token) + 1);
       if (!new || !new->token)
         flag = FAILURE;
-      else {
+      else if (rpn_output) {
         new->next = NULL;
         strcpy(new->token, stack_for_delims->token);
         new->token[strlen(new->token)] = '\0';
@@ -171,24 +184,8 @@ int dijkstra(char *input, rpn **rpn_head) {
       stack *temp = stack_for_delims;
       stack_for_delims = stack_for_delims->prev;
       free(temp->token);
-      free(temp);      
+      free(temp);
     }
   }
   return flag;
 }
-
-// int main()
-// {
-//   rpn *head = NULL;
-//   dijkstra("tan(atan(0.5))", &head);
-  
-//   while(head)
-//   {
-//     // printf("?");
-//     // printf("%s->", head->token);
-//     rpn *copy = head;
-//     head = head->next;
-//     free(copy->token);
-//     free(copy);
-//   }
-// }

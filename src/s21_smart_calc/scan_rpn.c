@@ -144,7 +144,7 @@ int sinus(stack **result) {
   else if (strchr((*result)->token, '.'))
     sprintf(res, "%lf", sin(atof((*result)->token)));
   else
-    sprintf(res, "%lf", sin(atoi((*result)->token)));  
+    sprintf(res, "%lf", sin(atoi((*result)->token)));
   free((*result)->token);
   (*result)->token = malloc(strlen(res) + 1);
   strcpy((*result)->token, res);
@@ -352,6 +352,18 @@ int calculate(rpn **rpn_ready, stack **result) {
         (count_chars((*rpn_ready)->token, ',') > 1 ||
          count_chars((*rpn_ready)->token, '.') > 1)) {
       flag = FAILURE;
+      while (*result) {
+        stack *temp = *result;
+        *result = temp->prev;
+        free((*result)->token);
+        free(*result);
+      }
+      // while(*rpn_ready)
+      // {
+      //   rpn *temp = *rpn_ready;
+      //   *rpn_ready = temp->next;
+      //   free((*rpn_ready)->token);
+      // }
       break;
     } else if (*result == NULL && !isdelim((*rpn_ready)->token[0]) &&
                !isfunc((*rpn_ready)->token)) {
@@ -360,52 +372,46 @@ int calculate(rpn **rpn_ready, stack **result) {
       (*result)->prev = NULL;
       strcpy((*result)->token, (*rpn_ready)->token);
     } else if (isdelim((*rpn_ready)->token[0]) || isfunc((*rpn_ready)->token)) {
-      printf("%s\n", (*rpn_ready)->token);
       flag = count_function(rpn_ready, result);
       if (flag == FAILURE) break;
     } else {
       stack *new = malloc(sizeof(stack));
       if (new) {
         new->token = malloc(strlen((*rpn_ready)->token) + 1);
-        if (!new->token)
-        {
+        if (!new->token) {
           free(new);
           flag = FAILURE;
-        }
-        else {
+        } else {
           strcpy(new->token, (*rpn_ready)->token);
           new->token[strlen(new->token)] = '\0';
           new->prev = *result;
           *result = new;
         }
-      }
-      else {
+      } else {
         flag = FAILURE;
-      }        
+      }
     }
-    if (flag != FAILURE)
-    {
+    if (flag != FAILURE) {
       rpn *temp;
       temp = *rpn_ready;
       (*rpn_ready) = (*rpn_ready)->next;
       free(temp->token);
       free(temp);
     }
-      
   }
-  if (flag == FAILURE)
-  {
-    // while(rpn_ready)
-    // {
-    //   rpn *temp;
-    //   temp = *rpn_ready;
-    //   (*rpn_ready) = (*rpn_ready)->next;
-    //   free(temp->token);
-    //   free(temp);
-    // }
-    // free((*result)->token);
-    // free(*result);
-  }
+  // if (flag == FAILURE)
+  // {
+  //   while(rpn_ready)
+  //   {
+  //     rpn *temp;
+  //     temp = *rpn_ready;
+  //     (*rpn_ready) = (*rpn_ready)->next;
+  //     free(temp->token);
+  //     free(temp);
+  //   }
+  //   // free((*result)->token);
+  //   // free(*result);
+  // }
   return flag;
 }
 
@@ -417,6 +423,7 @@ int unaries(char *input, char *dest) {
     prev_i = i;
     get_token(token, input + i, &i);
     if (prev_i == i) break;
+    if (strlen(token) == 0) flag = FAILURE;
     if ((strlen(prev_token) == 0 ||
          (isdelim(prev_token[0]) && strcmp(prev_token, ")"))) &&
         (strcmp(token, "+") == 0 || strcmp(token, "-") == 0)) {
@@ -460,7 +467,7 @@ int unaries(char *input, char *dest) {
 
 int scan_rpn(char *inp, char *result) {
   int flag = SUCCESS;
-  if (!inp)
+  if (strlen(inp) == 0)
     flag = FAILURE;
   else if (!result)
     flag = FAILURE;
@@ -471,21 +478,25 @@ int scan_rpn(char *inp, char *result) {
     char input[255] = "";
     if (unaries(inp, input) == FAILURE)
       flag = FAILURE;
-    else
-    {
-      if (dijkstra(input, &rpn_ready) == FAILURE)
+    else {
+      if (dijkstra(input, &rpn_ready) == FAILURE) {
+        while (rpn_ready) {
+          rpn *temp = rpn_ready;
+          rpn_ready = temp->next;
+          free(rpn_ready->token);
+          free(rpn_ready);
+        }
         flag = FAILURE;
-      else 
-      {
+      } else {
         stack *res_stack = NULL;
         if (calculate(&rpn_ready, &res_stack) == FAILURE)
           flag = FAILURE;
-        else
+        else if (res_stack)
           strcpy(result, res_stack->token);
+        if (strlen(result) == 0) flag = FAILURE;
         if (res_stack && res_stack->token) free(res_stack->token);
         if (res_stack) free(res_stack);
-        while (rpn_ready)
-        {
+        while (rpn_ready) {
           rpn *temp = rpn_ready;
           rpn_ready = rpn_ready->next;
           free(temp->token);
@@ -498,10 +509,10 @@ int scan_rpn(char *inp, char *result) {
   return flag;
 }
 
-//int main()
-//{
-//  char input[] = "atan(tan(0.5))";
+// int main()
+// {
+//  char input[] = "1 # 3";
 //  char result_s21[255] = "";
-//  scan_rpn(input, result_s21);
-//  // printf("%s\n", result_s21);
-//}
+//  printf("%s\n", result_s21);
+//  printf("%d\n", scan_rpn(input, result_s21));
+// }

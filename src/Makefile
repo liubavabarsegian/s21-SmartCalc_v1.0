@@ -74,7 +74,7 @@ rebuild: clean ${NAME}
 
 clean:
 	rm -rf test *.gcov *.css gcov*.html
-	rm -rf *.o *.a *.out s21_smart_calc/.qmake.stash
+	rm -rf *.o *.a *.out s21_smart_calc/.qmake.stash s21_smart_calc/*.user
 	rm -rf *.gcda *.gcno *.info *.gch
 	rm -rf test report
 
@@ -90,9 +90,7 @@ correct_style:
 
 installqt:
 	sudo apt update
+	sudo apt install clang-format
 	sudo apt install qtcreator -y
 	sudo apt install qtbase5-dev qtwayland5-dev-tools qtwayland5 -y
 	sudo apt install qt5-qmake -y
-
-leaks:
-	@valgrind --tool=memcheck --leak-check=full --track-origins=yes --show-reachable=yes --num-callers=20 --track-fds=yes --log-file="vg_info.log" ./test > vg_out.log
